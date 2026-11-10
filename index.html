@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>בקרה אופטימלית: מחברת הקורס</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --paper:#FBFCFE; --grid:#E6EBF4; --ink:#1B2A4A; --ink-soft:#4A5878; --pen:#2747A8;
+  --hl:#FFE873; --hl-soft:#FFF6BF; --red:#C2372E; --green:#2E7D4F; --panel:#FFFFFF; --line:#D5DCEA;
+  --plot-bg:#FFFFFF; --sidebar:#F2F5FA;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#141B2B; --grid:#1D2638; --ink:#E4E9F4; --ink-soft:#A7B2CB; --pen:#8FA8FF;
+    --hl:#7A6416; --hl-soft:#3A3318; --red:#FF8A80; --green:#7FD6A0; --panel:#1A2336; --line:#2E3A54;
+    --plot-bg:#172033; --sidebar:#111827; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141B2B; --grid:#1D2638; --ink:#E4E9F4; --ink-soft:#A7B2CB; --pen:#8FA8FF;
+  --hl:#7A6416; --hl-soft:#3A3318; --red:#FF8A80; --green:#7FD6A0; --panel:#1A2336; --line:#2E3A54;
+  --plot-bg:#172033; --sidebar:#111827; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); font-family:"Assistant","Arial Hebrew",Arial,sans-serif; font-size:18px; line-height:1.65;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+a{color:var(--pen)}
+:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+aside{
+  background:var(--sidebar); border-inline-start:none; border-inline-end:1px solid var(--line);
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding:28px 18px 40px;
+}
+.brand{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;font-size:30px;line-height:1.1;margin:0 0 4px}
+.brand-sub{color:var(--ink-soft);font-size:14px;margin:0 0 22px}
+nav ol{list-style:none;margin:0;padding:0;position:relative}
+nav ol::before{content:"";position:absolute;inset-inline-start:15px;top:8px;bottom:8px;width:2px;background:var(--line)}
+nav li{position:relative}
+nav a{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start;text-decoration:none;color:var(--ink);padding:7px 6px;border-radius:8px;font-size:15.5px;line-height:1.35}
+nav a .n{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:2px solid var(--line);font-weight:700;font-size:14px;position:relative;z-index:1}
+nav a:hover{background:var(--grid)}
+nav a[aria-current="true"]{background:var(--hl-soft)}
+nav a[aria-current="true"] .n{border-color:var(--pen);color:var(--pen)}
+nav a.done .n{background:var(--pen);border-color:var(--pen);color:var(--paper)}
+nav .home-link{margin-bottom:10px}
+.side-tools{margin-top:22px;display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{font:inherit;font-size:15px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--pen)}
+button.primary{background:var(--pen);border-color:var(--pen);color:var(--paper)}
+main{padding:40px clamp(18px,5vw,64px) 80px;min-width:0}
+.page{max-width:820px;margin:0 auto}
+.week{display:none}
+.week.active{display:block}
+.kicker{color:var(--pen);font-weight:700;font-size:16px;margin:0}
+h1{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;font-size:clamp(34px,5vw,50px);line-height:1.1;margin:4px 0 10px}
+h1 .mark{background:linear-gradient(transparent 55%,var(--hl) 55%);padding:0 4px}
+h2{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:27px;margin:44px 0 10px;line-height:1.25}
+h3{font-size:20px;margin:28px 0 6px}
+p,li{max-width:72ch}
+.source{font-size:15px;color:var(--ink-soft);border-inline-start:3px solid var(--line);padding-inline-start:12px;margin:0 0 24px}
+.result{background:var(--panel);border:2px solid var(--ink);border-radius:4px;padding:10px 18px;margin:18px 0;box-shadow:5px 5px 0 var(--hl)}
+.result .t{font-weight:700;font-size:15px;color:var(--ink-soft);margin:0}
+.note{border-inline-start:4px solid var(--red);background:var(--panel);padding:10px 16px;margin:18px 0;border-radius:0 6px 6px 0}
+.note b:first-child{color:var(--red)}
+.book{border-inline-start:4px solid var(--green);background:var(--panel);padding:10px 16px;margin:18px 0;border-radius:0 6px 6px 0}
+.book b:first-child{color:var(--green)}
+details.deriv{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin:14px 0;padding:0 16px}
+details.deriv summary{cursor:pointer;font-weight:700;padding:10px 0;color:var(--pen)}
+details.deriv[open]{padding-bottom:12px}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0;direction:ltr}
+.katex{direction:ltr;unicode-bidi:isolate}
+.lab{background:var(--panel);border:2px dashed var(--pen);border-radius:10px;padding:18px;margin:28px 0}
+.lab h3{margin-top:0;color:var(--pen)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 18px;margin:12px 0}
+.controls label{display:flex;flex-direction:column;font-size:14.5px;color:var(--ink-soft)}
+.controls label span.v{color:var(--ink);font-weight:700;direction:ltr;unicode-bidi:isolate}
+.controls input[type=range]{width:100%;accent-color:var(--pen)}
+input[type=number],select{font:inherit;font-size:15px;padding:4px 6px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;direction:ltr}
+canvas.plot{direction:ltr;width:100%;height:260px;display:block;background:var(--plot-bg);border:1px solid var(--line);border-radius:6px;margin:8px 0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--ink-soft);direction:ltr;justify-content:flex-end}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-inline-end:6px}
+.out{font-size:15.5px;margin:8px 0}
+.tbl-wrap{overflow-x:auto}
+table.data{border-collapse:collapse;font-size:15px;direction:ltr;margin:8px 0;min-width:300px}
+table.data th,table.data td{border:1px solid var(--line);padding:4px 10px;text-align:center}
+table.data th{background:var(--grid)}
+table.data td.best{background:var(--hl-soft);font-weight:700}
+.matrix-in{display:grid;grid-template-columns:auto repeat(3,72px);gap:4px;align-items:center;direction:ltr;font-size:14px}
+.quiz{margin:30px 0}
+.quiz details{border-bottom:1px solid var(--line);padding:8px 0}
+.quiz summary{cursor:pointer;font-weight:600}
+.quiz details > div{padding:8px 0 4px;color:var(--ink-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:56px;padding-top:20px;border-top:2px solid var(--ink)}
+.pager a{text-decoration:none;font-weight:700;max-width:45%}
+.pager small{display:block;color:var(--ink-soft);font-weight:400}
+.mark-done{margin-top:24px}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:22px 0}
+.home-grid a{display:block;background:var(--panel);border:1px solid var(--line);border-inline-start:5px solid var(--pen);padding:10px 14px;text-decoration:none;color:var(--ink);border-radius:4px}
+.home-grid a b{display:block;font-size:14px;color:var(--pen)}
+.menu-btn{display:none}
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  aside{position:fixed;inset:0 0 0 auto;width:min(320px,88vw);z-index:20;transform:translateX(100%);transition:transform .25s;padding-top:calc(28px + env(safe-area-inset-top,0px))}
+  aside.open{transform:none;box-shadow:-8px 0 30px rgba(0,0,0,.25)}
+  .menu-btn{display:inline-block;position:sticky;top:env(safe-area-inset-top,0px);z-index:10;margin:10px}
+  main{padding-top:10px}
+}
+@media (prefers-reduced-motion:reduce){aside{transition:none}}
+@media print{aside,.menu-btn,.lab,.pager,.mark-done{display:none}.week{display:block!important;page-break-after:always}body{background:none}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside id="sidebar" aria-label="ניווט בין השיעורים">
+  <p class="brand">בקרה<br>אופטימלית</p>
+  <p class="brand-sub">0-362.2.6221 · ד"ר ד. שוקרון · תשפ"ז</p>
+  <nav><ol id="navlist"></ol></nav>
+  <div class="side-tools">
+    <button id="themeBtn" type="button">מצב כהה/בהיר</button>
+    <button id="printBtn" type="button">הדפסה</button>
+  </div>
+</aside>
+<main>
+<button class="menu-btn" id="menuBtn" type="button" aria-controls="sidebar" aria-expanded="false">☰ שיעורים</button>
+<div class="page">
+
+<!-- ===================== HOME ===================== -->
+<section class="week" id="home" data-title="דף הבית">
+  <p class="kicker">אוניברסיטת בן-גוריון בנגב · הנדסת מכונות · תואר שני</p>
+  <h1>בקרה <span class="mark">אופטימלית</span></h1>
+  <p>מחברת אינטראקטיבית לקורס, מסודרת לפי 13 השבועות שבסילבוס. כל שיעור מבוסס על הסיכום של רותם כץ (22 הרצאות), עם תוספות מספרי הלימוד שברשימת הקריאה, נוסחאות מרכזיות במסגרת, גזירות מלאות שאפשר לפתוח, מעבדות אינטראקטיביות ושאלות לבדיקה עצמית.</p>
+  <div class="result"><p class="t">הקו המנחה של הקורס</p>
+  <p style="direction:ltr;text-align:center;font-weight:700;font-size:19px;margin:6px 0">DP (Bellman) → LQR → Kalman → LQG → HJ / HJB → continuous LQG → Jump LQG</p></div>
+  <h2>השבועות</h2>
+  <div class="home-grid" id="homeGrid"></div>
+  <h2>על הקורס</h2>
+  <p>הקורס מציג שיטות מתמטיות לניתוח ותכנון של בקרה אופטימלית למערכות אקראיות: עקרונות בקרה ושערוך אופטימלי סטוכסטי, אלגוריתם LQG בזמן בדיד ובזמן רציף בגישת תכנות דינמי, ובסוף בעיית בקרה של מערכות עם מיתוגים אקראיים (Jump LQG).</p>
+  <p>הערכה: תרגילי בית 20% (הגשה תוך שבועיים מהפרסום), פרויקט 80% בסוף הסמסטר. שיעורים בימי ראשון 09:00–12:00, גוטמן [32] חדר 111.</p>
+  <h3>ספרות</h3>
+  <p>Bellman &amp; Dreyfus, <i>Applied Dynamic Programming</i>, Princeton, 1962.<br>
+  Bryson &amp; Ho, <i>Applied Optimal Control</i>, Blaisdell, 1969.<br>
+  Anderson &amp; Moore, <i>Linear Optimal Control</i>, Prentice-Hall, 1971.<br>
+  Jazwinski, <i>Stochastic Processes and Filtering Theory</i>, Academic Press, 1970.</p>
+  <p class="source">מקרא: מסגרת עם צל צהוב היא תוצאה שכדאי לזכור. פס אדום הוא הערה או תיקון לסיכום. פס ירוק הוא תוספת מספרי הלימוד. מסגרת מקווקוות כחולה היא מעבדה אינטראקטיבית.</p>
+</section>
+
+<!-- ===================== WEEK 1 ===================== -->
+<section class="week" id="w1" data-title="מבוא, כלים מתמטיים וניסוח הבעיה">
+  <p class="kicker">שבוע 1</p>
+  <h1>מבוא: דיסקרטיזציה, פונקציונלים וניסוח הבעיה</h1>
+  <p class="source">מהסיכום: הרצאה 1 ותחילת "תכנות דינמי". בסילבוס: מבוא לתכנות דינמי ועקרון האופטימליות (שבועות 1–2).</p>
+
+  <h2>דיסקרטיזציה של מערכת LTI</h2>
+  <p>נתונה מערכת רציפה \(\dot x_t = Ax_t + Bu_t\), \(x(t_0)=x_0\). בקלט קבוע למקוטעין (ZOH), \(u(t)=u(t_k)\) עבור \(t_k\le t\lt t_{k+1}\), הפתרון של משוואת המצב הוא</p>
+  $$x_t=\Phi(t,t_0)x_0+\int_{t_0}^{t}\Phi(t,\tau)Bu(\tau)\,d\tau,\qquad \Phi(t,t_0)=e^{A(t-t_0)}.$$
+  <p>מציבים \(t_0=t_k,\ t=t_{k+1}\) ומחליפים משתנה \(\xi=(k+1)\Delta t-\tau\):</p>
+  <div class="result"><p class="t">משוואת המערכת בזמן בדיד</p>
+  $$x_{k+1}=F_kx_k+G_ku_k,\qquad F_k=e^{A\Delta t},\qquad G_k=\Big[\int_0^{\Delta t}e^{A\xi}d\xi\Big]B$$
+  <p>ובקירוב מסדר ראשון:</p>
+  $$F_k\approx I+A\Delta t,\qquad G_k\approx B\Delta t$$</div>
+  <p>ובאינדוקציה: \(x_k=F^kx_0+\sum_{i=0}^{k-1}F^{k-1-i}Gu_i\).</p>
+
+  <h2>אופרטורים ופונקציונלים</h2>
+  <p>אופרטור \(F\) הוא העתקה בין מרחבים וקטוריים \(X\to Y\) שמתאימה לכל \(x\) ערך יחיד \(y=F(x)\). דוגמה: \(y(t)=\int_0^t e^{A\xi}Bx(\xi)d\xi\) ממפה פונקציות רציפות על \([0,T]\) לפונקציות רציפות. <b>פונקציונל</b> הוא אופרטור שהטווח שלו הוא המספרים הממשיים, וזה בדיוק מה שפונקציית מחיר היא:</p>
+  $$f(x)=x^TQx,\qquad f(x(\cdot))=\int_0^Tx^T(t)Qx(t)\,dt,\qquad f(x)=\sum_{k=0}^\infty x_k^2.$$
+
+  <h2>נגזרת כיוונית (נגזרת גאטו)</h2>
+  <p>כדי למצוא קיצון של פונקציונל משתמשים בנגזרת בכיוון \(h\):</p>
+  <div class="result"><p class="t">תנאי הכרחי לקיצון</p>
+  $$\delta f(x;h)=\frac{d}{d\varepsilon}f(x+\varepsilon h)\Big|_{\varepsilon=0}=0\qquad\forall h\in X$$</div>
+  <p>אינטואיטיבית: בנקודת המינימום, ההפרעה הקטנה \(\varepsilon h\) לא משנה את הערך בסדר ראשון, בשום כיוון.</p>
+  <h3>דוגמה: תבנית ריבועית</h3>
+  <p>עבור \(f(x)=x^TQx+2y^Tx\) עם \(Q=Q^T\gt 0\):</p>
+  $$\frac{d}{d\varepsilon}f(x+\varepsilon h)\Big|_{0}=2(Qx+y)^Th=0\ \ \forall h\ \Rightarrow\ x^*=-Q^{-1}y,\qquad f(x^*)=-y^TQ^{-1}y.$$
+  <p>אותה תוצאה מתקבלת מגזירה ישירה: \(\partial f/\partial x=(Q+Q^T)x+2y=2(Qx+y)\).</p>
+  <details class="deriv"><summary>דוגמה בפונקציות: מינימום של \(\int_0^T(a_tx_t+b_t)^2dt\)</summary>
+  <p>עבור \(h\in\mathcal L_2[0,T]\):</p>
+  $$f(x+\varepsilon h)=\int_0^T(a_tx_t+b_t)^2dt+2\varepsilon\int_0^Ta_th_t(a_tx_t+b_t)dt+\varepsilon^2\int_0^Ta_t^2h_t^2dt$$
+  $$\frac{d}{d\varepsilon}\Big|_0=\int_0^T2a_th_t(a_tx_t+b_t)\,dt=0\quad\forall h.$$
+  <p>בוחרים \(h_t=(a_tx_t+b_t)/a_t\) ומקבלים \(\int_0^T(a_tx_t+b_t)^2dt=0\), כלומר \(x_t=-b_t/a_t\) כמעט בכל מקום.</p></details>
+
+  <h2>ניסוח בעיית בקרה אופטימלית דטרמיניסטית</h2>
+  <p>ארבעה רכיבים:</p>
+  <p><b>1. מודל:</b> \(x_{k+1}=A_kx_k+B_ku_k\), מדידה \(z_{k+1}=H_{k+1}x_{k+1}\).<br>
+  <b>2. פונקציית מחיר:</b> למשל עקיבה \(J=\sum_{k=0}^{N-1}\|x_{k+1}-x_d\|^2\), או עם מחיר על המאמץ
+  \(J=\sum_{k=0}^{N-1}\|x_{k+1}-x_d\|_Q^2+\|u_k\|_R^2\), \(Q\ge0,\ R\gt0\).<br>
+  <b>3. אילוצים:</b> על הבקר \(\|u_k\|\le\alpha_k\) ועל המצב.<br>
+  <b>4. המטרה:</b> למצוא סדרה \(\{u_k^*\}_{k=0}^{N-1}\) שממזערת את \(J=\sum_k W_k(x_{k+1},u_k)\).</p>
+  <p>הערה מהסיכום: \(x_0\) לא מופיע במחיר כי הוא נתון, ו-\(u_N\) לא מופיע כי הוא כבר לא משפיע על המסלול.</p>
+  <div class="book"><b>מהספרות.</b> Bryson &amp; Ho מציגים את אותו ניסוח (מערכת, מחיר, אילוצים) כנקודת המוצא לכל הפרקים, ומדגישים שבחירת \(Q\) ו-\(R\) היא החלטה הנדסית: \(Q\) קובע כמה "יקרה" סטייה במצב, ו-\(R\) כמה יקר מאמץ הבקרה. כלל אצבע נפוץ (כלל בריסון) הוא לבחור אלכסונים \(Q_{ii}=1/x_{i,\max}^2\), \(R_{jj}=1/u_{j,\max}^2\).</div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה \(G_k\approx B\Delta t\) ולא \(B\)?</summary><div>כי הקלט פועל לאורך כל הצעד: \(G=\int_0^{\Delta t}e^{A\xi}d\xi\,B=(\Delta t\,I+A\Delta t^2/2+\dots)B\). האיבר המוביל הוא \(B\Delta t\).</div></details>
+  <details><summary>מה ההבדל בין אופרטור לפונקציונל?</summary><div>פונקציונל הוא אופרטור שמחזיר מספר ממשי. פונקציית מחיר היא פונקציונל של מסלול המצב והבקרה.</div></details>
+  <details><summary>מה התנאי ההכרחי לקיצון של פונקציונל?</summary><div>הנגזרת הכיוונית מתאפסת בכל כיוון: \(\frac{d}{d\varepsilon}f(x+\varepsilon h)|_{\varepsilon=0}=0\) לכל \(h\).</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 2 ===================== -->
+<section class="week" id="w2" data-title="עקרון האופטימליות של בלמן">
+  <p class="kicker">שבוע 2</p>
+  <h1>תכנות דינמי ועקרון האופטימליות של בלמן</h1>
+  <p class="source">מהסיכום: הרצאות 2–3.</p>
+
+  <h2>עקרון האופטימליות</h2>
+  <p>אם מסלול מ-\(x_0\) ל-\(x_N\) הוא אופטימלי ועובר דרך \(x_i\), אז החלק שלו מ-\(x_i\) ל-\(x_N\) חייב להיות אופטימלי גם הוא. אחרת היינו מחליפים את הזנב בזנב זול יותר ומקבלים מסלול זול מהאופטימלי, וזו סתירה:</p>
+  $$J^1_{i}+J^3_{N}\lt J^1_i+J^2_N$$
+  <p>וזה סותר את ההנחה שהמסלול 1→2 אופטימלי.</p>
+  <div class="book"><b>בלמן ודרייפוס (1962)</b> מנסחים זאת כך, בתרגום חופשי: למדיניות אופטימלית יש התכונה שלא משנה מה היו המצב וההחלטה ההתחלתיים, ההחלטות הנותרות חייבות להוות מדיניות אופטימלית ביחס למצב שנוצר מההחלטה הראשונה.</div>
+  <p>הדוגמה במשולש מהשיעור מראה למה פתרון "חמדני" נכשל: הבחירה הזולה ביותר בכל צעד (10) מובילה למעבר שמחירו 100, בעוד שהמסלול האופטימלי מתחיל בצעד יקר יותר. המסקנה: צריך להתחיל מהסוף.</p>
+
+  <h2>האלגוריתם הכללי</h2>
+  <p>נתון \(x_{k+1}=f_k(x_k,u_k)\) ומחיר \(J=\sum_{k=0}^{N-1}W_k(x_{k+1},u_k)\). נסמן ב-\(J_k\) את המחיר מהשלב \(k\) ועד הסוף.</p>
+  <div class="result"><p class="t">משוואת בלמן (בזמן בדיד)</p>
+  $$J_k^*(x_k)=\min_{u_k}\Big\{W_k\big(f_k(x_k,u_k),u_k\big)+J_{k+1}^*\big(f_k(x_k,u_k)\big)\Big\},\qquad J_N^*\equiv0$$</div>
+  <p><b>הליכה לאחור</b> \((k=N-1,\dots,0)\): לכל מצב אפשרי מחשבים את \(u_k^*(x_k)\) ואת \(J_k^*(x_k)\). <b>הליכה קדימה:</b> מתחילים מ-\(x_0\) הנתון, מפעילים \(u_0^*(x_0)\), מקבלים \(x_1\), וכן הלאה.</p>
+  <p>שתי תוצאות חשובות: פונקציית הבקרה \(u_k^*(\cdot)\) היא <b>בקר במשוב</b> (חוג סגור), ו-\(J_k^*(\cdot)\) היא פונקציית המחיר האופטימלי (optimal return function).</p>
+
+  <div class="lab" data-lab="dp3"><h3>מעבדה: תכנון מסלול בין 3 מצבים</h3>
+  <p>הדוגמה מהשיעור: בכל יום עוברים בין המצבים {1,2,3}, ובטבלה עלות המעבר מ-\(x_k\) (עמודה) ל-\(x_{k+1}\) (שורה). אפשר לשנות את העלויות ואת מספר השלבים ולראות את ההליכה לאחור.</p>
+  <div class="dp3-ui"></div></div>
+
+  <h2>דוגמאות מהסיכום</h2>
+  <h3>דוגמה 1: \(x_{k+1}=ax_k^2+bu_k\), \(J=\sum x_{k+1}^2\)</h3>
+  <p>בשלב האחרון: \(\min_{u}(ax_{N-1}^2+bu_{N-1})^2\) נותן \(u_{N-1}^*=-\frac{a}{b}x_{N-1}^2\) ו-\(J_{N-1}^*=0\). מכיוון שהמחיר האופטימלי מתאפס, כל שלב קודם נראה בדיוק אותו דבר:</p>
+  <div class="result">$$u_k^*=-\frac{a}{b}x_k^2,\qquad J_k^*=0.$$</div>
+  <h3>דוגמה 2: אילוץ \(u_k\ge0\), \(x_{k+1}=\alpha x_k+u_k\)</h3>
+  <p>מציבים \(u=\hat u^2\) כדי להעלים את האילוץ. בשלב האחרון: אם \(x_{N-1}\gt0\) הבקר לא יכול לעזור (\(u^*=0\), \(J^*=\alpha^2x^2\)); אם \(x_{N-1}\lt0\) אפשר לאפס (\(u^*=-\alpha x\), \(J^*=0\)).</p>
+  $$u_k^*=\begin{cases}-\alpha x_k,&x_k\lt0\\0,&x_k\gt0\end{cases}\qquad J_k^*=a_kx_k^2,\ \ a_k=\begin{cases}0&x_k\lt0\\(1+a_{k+1})\alpha^2&x_k\gt0\end{cases}$$
+  <p>הלקח: DP מטפל באילוצים בלי בעיה, אבל חוק הבקרה כבר לא לינארי.</p>
+
+  <h3>דוגמה 3 (וקטורית): \(x_{k+1}=Ix_k+bu_k\), \(b=[1,1]^T\)</h3>
+  <p>מחיר \(J=\sum_{k=0}^{2}\|x_{k+1}\|^2+u_k^2\), \(x_0=[20,21]^T\). ההליכה לאחור נותנת:</p>
+  $$u_2^*=-\tfrac13b^Tx_2,\quad u_1^*=-\tfrac4{11}b^Tx_1,\quad u_0^*=-\tfrac{15}{41}b^Tx_0$$
+  $$J_2^*=\|x_2\|^2-\tfrac13(b^Tx_2)^2,\quad J_1^*=2\|x_1\|^2-\tfrac9{11}(b^Tx_1)^2,\quad J_0^*=3\|x_0\|^2-\tfrac{54}{41}(b^Tx_0)^2$$
+  <div class="lab" data-lab="vecdp"><h3>מעבדה: הדוגמה הווקטורית</h3>
+  <p>שנו את \(x_0\) ואת \(N\). עבור \(x_0=[20,21]\) ו-\(N=3\) אמור להתקבל \(u^*=-15,-4,-1\) ו-\(J_0^*=309\), כמו בסיכום.</p>
+  <div class="vecdp-ui"></div></div>
+  <p>בסיכום מוצג גם פתרון ישיר: מביעים את \(x_1,x_2,x_3\) באמצעות \(x_0\) ו-\(u_0,u_1,u_2\), גוזרים ומקבלים מערכת לינארית 3×3 עם אותו פתרון. ההבדל: הפתרון הישיר הוא <b>חוג פתוח</b> (פונקציה של \(x_0\) בלבד), ואילו DP נותן <b>חוג סגור</b>, שמגיב להפרעות ולשגיאות מודל. לכן DP עדיף.</p>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה מתחילים את ה-DP מהשלב האחרון?</summary><div>בשלב האחרון אין עתיד, אז המינימיזציה היא בעיה סטטית אחת. כל שלב קודם משתמש ב-\(J_{k+1}^*\) שכבר חושב.</div></details>
+  <details><summary>מה ההבדל בין הפתרון הישיר לפתרון ה-DP בדוגמה הווקטורית?</summary><div>המספרים זהים, אבל הפתרון הישיר הוא סדרת מספרים שתלויה ב-\(x_0\) בלבד (חוג פתוח), ו-DP נותן חוק \(u_k^*(x_k)\) שתלוי במצב הנוכחי (חוג סגור).</div></details>
+  <details><summary>מה הבעיה של DP במצב רציף רב-ממדי?</summary><div>"קללת הממדיות" של בלמן: צריך לחשב ולשמור את \(J_k^*\) לכל מצב אפשרי, ומספר נקודות הרשת גדל אקספוננציאלית עם הממד. לכן המקרה הלינארי-ריבועי, שבו \(J^*\) נשאר ריבועי, כל כך חשוב.</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 3 ===================== -->
+<section class="week" id="w3" data-title="LQR בזמן בדיד">
+  <p class="kicker">שבוע 3</p>
+  <h1>בעיית בקרה LQR דטרמיניסטית, זמן בדיד</h1>
+  <p class="source">מהסיכום: הרצאה 4.</p>
+
+  <h2>כלי: השלמה לריבוע</h2>
+  <p>במקרה הסקלרי, \(f(x)=ax^2+2bx+c\) עם \(a\gt0\):</p>
+  $$f(x)=a\Big(x+\frac ba\Big)^2+c-\frac{b^2}{a}\ \Rightarrow\ x^*=-\frac ba,\quad f^*=c-\frac{b^2}a.$$
+  <div class="note"><b>תיקון לסיכום.</b> בשורה הראשונה של דרך 1 כתוב \(f(x^*)=c-b/a\). הערך הנכון הוא \(c-b^2/a\), כפי שמופיע בהמשך במסגרת.</div>
+  <p>במקרה הווקטורי, \(f(x)=\|x\|_A^2+2b^Tx+c\) עם \(A=A^T\gt0\):</p>
+  <div class="result"><p class="t">השלמה לריבוע וקטורית</p>
+  $$f(x)=\|x+A^{-1}b\|_A^2+c-\|b\|^2_{A^{-1}}\ \Rightarrow\ x^*=-A^{-1}b,\quad f^*=c-b^TA^{-1}b$$</div>
+
+  <h2>ניסוח</h2>
+  <p>\(x_{k+1}=Ax_k+Bu_k\), \(y_k=x_k\) (מידע מלא), ומחיר \(J=\sum_{k=0}^{N-1}\|x_{k+1}\|^2_{Q_k}+\|u_k\|^2_{R_k}\), עם \(Q\ge0\), \(R\gt0\). (בסיכום מופיע תחילה המקרה \(R=0\); הנוסחאות כאן כוללות את \(R\), ו-\(R=0\) הוא מקרה פרטי כל עוד \(B^TPB\) הפיכה.)</p>
+
+  <h2>הפתרון ב-DP</h2>
+  <p>בשלב האחרון, נגדיר \(P_N=Q_{N-1}\). צריך למזער את</p>
+  $$\|Ax+Bu\|^2_{P_N}+\|u\|_R^2=\|u\|^2_{B^TP_NB+R}+2x^TA^TP_NBu+\|x\|^2_{A^TP_NA}.$$
+  <p>זו תבנית ריבועית ב-\(u\), וההשלמה לריבוע נותנת את הבקר. הצבה חזרה נותנת מחיר ריבועי ב-\(x\), ולכן כל שלב קודם נראה אותו דבר.</p>
+  <div class="result"><p class="t">אלגוריתם LQR בזמן בדיד</p>
+  <p><b>הליכה לאחור</b>, \(P_N=Q_{N-1}\), עבור \(k=N-1,\dots,0\):</p>
+  $$M_k=(B^TP_{k+1}B+R)^{-1}B^TP_{k+1}A$$
+  $$P_k=A^TP_{k+1}(A-BM_k)+Q_{k-1}$$
+  <p>(זו משוואת ריקאטי.)</p>
+  <p><b>הליכה קדימה:</b></p>
+  $$u_k^*=-M_kx_k,\qquad x_{k+1}=Ax_k+Bu_k^*,\qquad J_k^*=\|x_k\|^2_{P_k-Q_{k-1}}$$</div>
+  <details class="deriv"><summary>צורה סימטרית (ג'וזף) של ריקאטי</summary>
+  <p>מהתנאי \(M_k^T(B^TP_{k+1}B+R)M_k=M_k^TB^TP_{k+1}A\) מקבלים צורה שקולה שבה כל איבר חיובי למחצה:</p>
+  $$P_k=(A-BM_k)^TP_{k+1}(A-BM_k)+M_k^TRM_k+Q_{k-1}.$$
+  <p>הצורה הזו עדיפה נומרית: היא שומרת על סימטריה וחיוביות של \(P\) גם עם שגיאות עיגול.</p></details>
+
+  <h2>מסקנות מהסיכום</h2>
+  <p>1. ה-LQR הוא בקר במשוב מצב לינארי, \(u_k^*=-M_kx_k\), ולכן עמיד יותר להפרעות מבקר בחוג פתוח.<br>
+  2. ההגבר \(M_k\) לא תלוי במצב, ולכן אפשר לחשב את כל הסדרה <b>off-line</b> מראש ולשמור בזיכרון.<br>
+  3. האלגוריתם רקורסיבי, וזה חוסך חישוב.<br>
+  4. \(J_k^*=\|x_k\|^2_{P_k-Q_{k-1}}\): המחיר מכאן והלאה הוא תבנית ריבועית במצב הנוכחי.<br>
+  5. במקרה הכללי ביותר יש גם איבר צולב \(2x^TNu\) במחיר, והפתרון באותו מבנה.<br>
+  6. אם המערכת והמשקלים קבועים בזמן ו-\(N\to\infty\), \(P_k\) מתכנס לקבוע \(P_\infty\), ומתקבל הגבר קבוע.</p>
+  <div class="book"><b>Anderson &amp; Moore</b> מוכיחים שעבור מערכת קבועה בזמן, אם \((A,B)\) ניתנת לייצוב ו-\((A,Q^{1/2})\) ניתנת לגילוי, אז הרקורסיה של ריקאטי מתכנסת לפתרון היחיד המייצב של משוואת ריקאטי האלגברית (DARE), והחוג הסגור \(A-BM_\infty\) יציב. זה הבסיס לכך שבפועל משתמשים בהגבר קבוע.</div>
+
+  <div class="lab" data-lab="lqr"><h3>מעבדה: LQR סקלרי</h3>
+  <p>מערכת \(x_{k+1}=ax_k+bu_k\). שימו לב: ההגבר מתייצב רחוק מהסוף ומשתנה רק בצעדים האחרונים. עם \(a\gt1\) המערכת בחוג פתוח לא יציבה, וה-LQR מייצב אותה. הגדלת \(r\) מייקרת את הבקרה ומאטה את ההתכנסות.</p>
+  <div class="lqr-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה המחיר האופטימלי נשאר ריבועי בכל שלב?</summary><div>כי מינימום של תבנית ריבועית ב-\((x,u)\) לפי \(u\) הוא תבנית ריבועית ב-\(x\) (משלים שור). זה מה שמאפשר לשמור רק מטריצה \(P_k\) במקום פונקציה כללית.</div></details>
+  <details><summary>מתי אפשר לחשב את \(M_k\) לפני שהמערכת רצה?</summary><div>תמיד ב-LQR: \(M_k\) תלוי רק ב-\(A,B,Q,R\) ולא במצב או במדידות.</div></details>
+  <details><summary>מה התפקיד של \(R\gt0\)?</summary><div>מבטיח ש-\(B^TPB+R\) הפיכה, ומונע הגבר אינסופי. בלי \(R\), צריך ש-\(B^TPB\) תהיה הפיכה בעצמה.</div></details>
+  </div>
+</section>
+<!-- ===================== WEEK 4 ===================== -->
+<section class="week" id="w4" data-title="LQG עם מידע מלא: ניסוח">
+  <p class="kicker">שבוע 4</p>
+  <h1>סדרות אקראיות ובקרה סטוכסטית עם מידע מלא</h1>
+  <p class="source">מהסיכום: חזרה על הסתברות, הרצאות 5–6.</p>
+
+  <h2>חזרה קצרה על הסתברות</h2>
+  <p>לווקטורים אקראיים: פונקציה שולית \(p(x)\), משותפת \(p(x,y)\), מותנית \(p(x\mid y)\). תוחלת \(E\{x\}=\int x\,p(x)dx\), קווריאנס \(Q=E\{(x-E x)(x-E x)^T\}\), סימטרית וחיובית למחצה. התפלגות גאוס:</p>
+  $$p(x)=\frac{1}{(2\pi)^{n/2}|Q|^{1/2}}\exp\Big(-\tfrac12\|x-\mu\|^2_{Q^{-1}}\Big).$$
+  <p>שתי עובדות שחוזרות כל הזמן: טרנספורמציה לינארית של וקטור גאוסי היא גאוסית, ובווקטור גאוסי, חוסר קורלציה שקול לאי-תלות.</p>
+
+  <h2>סדרות אקראיות</h2>
+  <p>סדרה אקראית היא אוסף משתנים אקראיים \(\{x_0,x_1,\dots\}\) עם אינדקס שלם. אפיון מלא דורש את ההתפלגות המשותפת \(p(x_0,\dots,x_k)\) לכל \(k\).</p>
+  <div class="result"><p class="t">סדרת מרקוב</p>
+  $$p(x_{k+1}\mid x_k,x_{k-1},\dots,x_0)=p(x_{k+1}\mid x_k)$$
+  $$\Rightarrow\ p(x_0,\dots,x_k)=p(x_k\mid x_{k-1})\cdots p(x_1\mid x_0)\,p(x_0)$$</div>
+  <p>כלומר, סדרת מרקוב מאופיינת לגמרי על ידי \(p(x_0)\) וצפיפויות המעבר. <b>רעש לבן</b> הוא סדרה של משתנים בלתי תלויים: \(p(x_0,\dots,x_k)=\prod p(x_i)\), והוא מקרה פרטי של מרקוב.</p>
+  <p>דוגמה: \(x_{k+1}=x_k+w_k\) עם \(w_k\) לבן היא מרקובית, כי ההתניה על \(x_k=p_k\) הופכת את \(w_k\) למה שקובע לבדו את \(x_{k+1}\). ומשוואה מסדר גבוה, כמו \(x_{k+1}=x_k+x_{k-1}+w_k\), הופכת למרקובית על ידי הגדלת המצב: \(y_k=[x_k;x_{k-1}]\).</p>
+
+  <h2>סדרות גאוס-מרקוב (GMRS)</h2>
+  <p>עבור \(x_{k+1}=A_kx_k+w_k\) עם \(\{w_k\}\) לבן גאוסי, \(E w_k=\mu_{w_k}\), \(\mathrm{cov}\,w_k=Q_k\), ו-\(x_0\) גאוסי ובלתי תלוי ב-\(w\):</p>
+  <div class="result"><p class="t">צפיפות המעבר</p>
+  $$E\{x_{k+1}\mid x_k\}=A_kx_k+\mu_{w_k},\qquad \mathrm{cov}\{x_{k+1}\mid x_k\}=Q_k$$
+  $$p(x_{k+1}\mid x_k)=\mathcal N\big(A_kx_k+\mu_{w_k},\ Q_k\big)$$</div>
+
+  <h2>בקרה אופטימלית סטוכסטית עם מידע מלא</h2>
+  <p>הבעיה: \(x_{k+1}=f_k(x_k,u_k,w_k)\), \(y_k=x_k\), מחיר \(J=E\{\sum_{k=0}^{N-1}W_k(x_{k+1},u_k)\}\). הבקר יכול להיות אקראי, כלומר להיבחר לפי \(p(u_k\mid y^k,u^{k-1})\), וממזערים על פני כל הצפיפויות האלה.</p>
+  <div class="result"><p class="t">הלמה הבסיסית של בקרה סטוכסטית</p>
+  $$\min_{u(\cdot)\in U}E\{g(x,u)\}=E\Big\{\min_{u\in U}g(x,u)\Big\}$$
+  <p>כאשר \(U\) היא קבוצת חוקי המשוב \(u(x)\). מכאן: מספיק למזער את המחיר <b>לכל ערך של המידע</b> בנפרד.</p></div>
+  <details class="deriv"><summary>הוכחת הלמה (שני אי-שוויונות)</summary>
+  <p>(1) לכל \(u\) מתקיים \(g(x,u^*(x))\le g(x,u)\), כאשר \(u^*(x)\) הוא נקודת המינימום הנקודתית. לוקחים תוחלת: \(E\{\min_u g\}\le\min_u E\{g\}\).</p>
+  <p>(2) מצד שני, \(u^*(\cdot)\) הוא בעצמו חוק ב-\(U\), אז \(\min_{u\in U}E\{g\}\le E\{g(x,u^*(x))\}=E\{\min g\}\).</p>
+  <p>משני הכיוונים מקבלים שוויון.</p></details>
+  <details class="deriv"><summary>הבקר האופטימלי דטרמיניסטי</summary>
+  <p>בשלב האחרון המחיר הוא \(I(p)=\int\lambda(x_{N-1},u_{N-1})\,p(u_{N-1}\mid\cdot)\,du_{N-1}\), כאשר \(\lambda(x,u)=\int W\,p(x_N\mid x_{N-1},u_{N-1})dx_N\) היא תוחלת המחיר. מכיוון ש-\(p\ge0\) ואינטגרלה 1, המינימום מתקבל כשכל המסה מרוכזת במינימום של \(\lambda\):</p>
+  $$p^*(u\mid\cdot)=\delta(u-u^*),\qquad \min_pI(p)=\lambda(x,u^*).$$
+  <p>כלומר, הבקר האופטימלי לא מגריל. הוא פונקציה דטרמיניסטית של המידע, ו-\(u_{N-1}=u^*(x_{N-1})\) הוא וקטור אקראי רק דרך \(x_{N-1}\). במקום להתמודד עם פונקציונל של \(p\), מספיק למזער את \(\lambda\) לפי \(u\).</p></details>
+  <p>תכונה נוספת מהסיכום: מכיוון ש-\(x_{k+1}=f(x_k,u_k,w_k)\) ו-\(w\) לבן, \(p(x_{k+1}\mid y^k,u^k)=p(x_{k+1}\mid x_k,u_k)\). לכן משוואת בלמן הסטוכסטית היא:</p>
+  <div class="result">$$J_k^*(x_k)=\min_{u_k}E\Big\{W_k(x_{k+1},u_k)+J_{k+1}^*(x_{k+1})\ \Big|\ x_k,u_k\Big\}$$</div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה \(x_{k+1}=x_k+x_{k-1}+w_k\) אינה מרקובית, ואיך מתקנים?</summary><div>כי \(x_{k+1}\) תלוי גם ב-\(x_{k-1}\). מגדירים מצב מורחב \(y_k=[x_k;x_{k-1}]\) ומקבלים \(y_{k+1}=Ay_k+Bw_k\), שהיא מרקובית.</div></details>
+  <details><summary>מה המשמעות המעשית של הלמה \(\min E=E\min\)?</summary><div>כשהמידע זמין לבקר, אפשר למזער את המחיר המותנה בנפרד לכל ערך של המידע, במקום למזער על פני מרחב של פונקציות.</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 5 ===================== -->
+<section class="week" id="w5" data-title="LQG עם מידע מלא: דוגמאות">
+  <p class="kicker">שבוע 5</p>
+  <h1>LQG עם מידע מלא, זמן בדיד: דוגמאות</h1>
+  <p class="source">מהסיכום: הרצאה 7.</p>
+
+  <h2>דוגמה 1: רעש אדיטיבי</h2>
+  <p>\(x_{k+1}=ax_k+bu_k+w_k\), \(E w_k=0\), \(E w_k^2=\sigma^2\), \(J=E\{\sum x_{k+1}^2\}\).</p>
+  $$\min_{u}E\{(ax+bu+w)^2\}=\min_u\,(ax+bu)^2+\sigma^2\ \Rightarrow\ u^*=-\frac abx,\quad J^*_{N-1}=\sigma^2.$$
+  <div class="result"><p class="t">הפתרון</p>
+  $$u_k^*=-\frac abx_k,\qquad J_k^*=(N-k)\sigma^2$$</div>
+  <p>מסקנות: חוק הבקרה זהה לזה של המקרה הדטרמיניסטי \((w\equiv0)\). האקראיות משפיעה רק על המחיר, שגדל לינארית עם האופק. המשמעות: הבקר הורג את \(ax_k\) בכל צעד, ונשאר רק הרעש של הצעד האחרון.</p>
+
+  <h2>דוגמה 2: פרמטר אקראי \(a_k\)</h2>
+  <p>\(x_{k+1}=a_kx_k+bu_k\), עם \(a_k\) לבן, \(E a_k=\mu\), \(\mathrm{Var}\,a_k=\sigma^2\). בשלב האחרון: \(J_{N-1}=(\mu^2+\sigma^2)x^2+b^2u^2+2\mu bxu\), כלומר</p>
+  $$J_{N-1}=(\mu x+bu)^2+\sigma^2x^2\ \Rightarrow\ u^*=-\frac{\mu}{b}x,\quad J^*_{N-1}=\sigma^2x^2.$$
+  <div class="result">$$u_k^*=-\frac{\mu}{b}x_k,\qquad J_k^*=\alpha_kx_k^2,\qquad \alpha_k=(1+\alpha_{k+1})\sigma^2,\ \ \alpha_{N-1}=\sigma^2$$</div>
+  <p>כאן האקראיות היא <b>כפלית</b>: היא כבר לא רק מוסיפה קבוע, אלא קובעת את הגבר המחיר. אם \(\sigma^2\ll1\), \(J_0^*\approx\sigma^2x_0^2\).</p>
+
+  <h2>דוגמה 3: \(a_k\) ו-\(b_k\) אקראיים</h2>
+  <p>\(x_{k+1}=a_kx_k+b_ku_k+w_k\), עם \(E a=\alpha\), \(E b=\beta\), \(E w=0\), שונויות \(\sigma_a^2,\sigma_b^2,\sigma_w^2\), כולם בלתי תלויים.</p>
+  $$J_{N-1}=(\alpha^2+\sigma_a^2)x^2+(\beta^2+\sigma_b^2)u^2+2\alpha\beta xu+\sigma_w^2$$
+  <div class="result"><p class="t">הפתרון</p>
+  $$u_k^*=-\frac{\alpha\beta}{\beta^2+\sigma_b^2}\,x_k,\qquad J_k^*=c_kx_k^2+d_k$$
+  $$C=\sigma_a^2+\alpha^2-\frac{\alpha^2\beta^2}{\beta^2+\sigma_b^2},\quad c_{N-1}=C,\ d_{N-1}=\sigma_w^2,\quad c_k=(1+c_{k+1})C,\ d_k=(1+c_{k+1})\sigma_w^2+d_{k+1}$$</div>
+  <div class="note"><b>תיקון לסיכום.</b> בעמוד המסכם של דוגמה 3 כתוב \(C=\sigma_a^2+\alpha^2+\frac{\alpha\beta}{\sigma_b^2+\beta^2}\). מהחישוב בעמוד הקודם (הצבת \(u^*\)) יוצא \(C=\sigma_a^2+\alpha^2-\frac{\alpha^2\beta^2}{\sigma_b^2+\beta^2}\), עם מינוס ועם ריבועים.</div>
+  <p>מסקנות: חוק הבקרה עדיין לינארי, אבל עכשיו הוא תלוי בסטטיסטיקה של הרעשים. כש-\(\sigma_b\gt0\) ההגבר <b>קטן</b> מ-\(\alpha/\beta\): הבקר "זהיר", כי פעולה חזקה מגבירה את אי-הוודאות. עם \(\sigma_a=\sigma_b=\sigma_w=0\) חוזרים לדוגמה הדטרמיניסטית.</p>
+  <div class="book"><b>מהספרות.</b> התופעה הזו נקראת "זהירות" (cautious control). היא מראה שעקרון הוודאות השקולה (certainty equivalence), שבו מציבים את התוחלות במקום המשתנים האקראיים ופותרים כאילו הבעיה דטרמיניסטית, נכון רק כשהרעש אדיטיבי (דוגמה 1). בדוגמה 3 הוא כבר לא אופטימלי.</div>
+
+  <div class="lab" data-lab="cautious"><h3>מעבדה: בקר זהיר מול ודאות שקולה</h3>
+  <p>סימולציית מונטה קרלו של דוגמה 3 עם 400 מסלולים, \(N=10\), \(x_0=1\). משווים את הבקר האופטימלי \(-\alpha\beta/(\beta^2+\sigma_b^2)\) לבקר הנאיבי \(-\alpha/\beta\). הגדילו את \(\sigma_b\) וראו את הפער גדל.</p>
+  <div class="cautious-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>בדוגמה 1, למה \(J_0^*=N\sigma^2\) ולא תלוי ב-\(x_0\)?</summary><div>כי הבקר מבטל את \(ax_k\) לגמרי בכל צעד, אז כל \(x_{k+1}\) הוא פשוט \(w_k\), עם \(E\{w_k^2\}=\sigma^2\). סוכמים \(N\) איברים.</div></details>
+  <details><summary>למה בדוגמה 3 הבקר האופטימלי חלש מהבקר הנאיבי?</summary><div>כי \(u\) מוכפל ב-\(b_k\) אקראי, ולכן פעולה גדולה מוסיפה שונות \(\sigma_b^2u^2\) למצב. האופטימום מאזן בין תיקון הממוצע לבין הוספת רעש.</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 6 ===================== -->
+<section class="week" id="w6" data-title="מסנן קלמן: גישת בייס">
+  <p class="kicker">שבוע 6</p>
+  <h1>מסנן קלמן בזמן בדיד: גישת בייס</h1>
+  <p class="source">מהסיכום: הרצאות 8–12 (שערוך, MMSE, BLUE, גזירת קלמן, תכונות ודוגמאות).</p>
+
+  <h2>המשערך האופטימלי הוא התוחלת המותנית</h2>
+  <p>רוצים לשערך \(x\) מתוך מדידה \(y\). אפשר לבחור את השכיח (MAP), את החציון, או את מה שממזער את שגיאת הריבועים:</p>
+  $$J(\hat x)=E\{(x-\hat x)^2\mid y\}=\hat x^2-2\hat xE\{x\mid y\}+E\{x^2\mid y\}$$
+  <div class="result"><p class="t">משערך MMSE</p>
+  $$\hat x^*=E\{x\mid y\},\qquad J^*=\mathrm{Var}\{x\mid y\}$$</div>
+  <p>ואת \(p(x\mid y)\) מחשבים בעזרת חוק בייס: \(p(x\mid y)=p(y\mid x)p(x)/p(y)\).</p>
+
+  <h2>משערך לינארי חסר הטיה (BLUE)</h2>
+  <p>משערך \(\hat x=Fy\) שהוא לינארי, חסר הטיה \((E\hat x=Ex)\) ובעל קווריאנס שגיאה \(C_e=E\{ee^T\}\) מינימלי (במובן ה-trace). היתרון: לא צריך את כל ההתפלגות, רק מומנטים ראשונים ושניים (distribution free).</p>
+  <div class="result"><p class="t">משפט גאוס-מרקוב</p>
+  $$\hat x=C_{xy}C_y^{-1}y,\qquad C_e=C_x-C_{xy}C_y^{-1}C_{yx}$$</div>
+  <details class="deriv"><summary>ההוכחה: השלמה לריבוע מטריציונית</summary>
+  <p>למה: לכל \(A,B\) ו-\(C=C^T\gt0\) מתאימים,</p>
+  $$ACA^T-BA^T-AB^T=(A-BC^{-1})C(A-BC^{-1})^T-BC^{-1}B^T.$$
+  <p>עבור \(\hat x=Ay\): \(C_e=C_x-C_{xy}A^T-AC_{yx}+AC_yA^T\). לפי הלמה:</p>
+  $$C_e=(A-C_{xy}C_y^{-1})C_y(A-C_{xy}C_y^{-1})^T+C_x-C_{xy}C_y^{-1}C_{yx}.$$
+  <p>האיבר השני לא תלוי ב-\(A\), והראשון חיובי למחצה ומתאפס כש-\(A^*=C_{xy}C_y^{-1}\). זה מינימום גם במובן ה-trace וגם במובן המטריצי.</p></details>
+  <p>במקרה הפרטי \(y=Hx+v\) עם \(C_{xv}=0\):</p>
+  $$\hat x=C_xH^T(HC_xH^T+C_v)^{-1}y,\qquad C_e=C_x-C_xH^T(HC_xH^T+C_v)^{-1}HC_x.$$
+
+  <h3>דוגמה: מיזוג שתי מדידות</h3>
+  <p>שתי מדידות בלתי תלויות \(x_1,x_2\) של אותה כמות, עם שונויות \(\sigma_1^2,\sigma_2^2\). מחפשים \(\hat x=w_1x_1+w_2x_2\), וחוסר הטיה מכריח \(w_1+w_2=1\):</p>
+  <div class="result">$$\hat x=\frac{\sigma_2^2}{\sigma_1^2+\sigma_2^2}x_1+\frac{\sigma_1^2}{\sigma_1^2+\sigma_2^2}x_2,\qquad \sigma_{\hat x}^2=\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2+\sigma_2^2}\lt\min(\sigma_1^2,\sigma_2^2)$$</div>
+  <p>המדידה המדויקת יותר מקבלת משקל גדול יותר, והתוצאה תמיד טובה מכל מדידה לבד.</p>
+  <div class="lab" data-lab="fusion"><h3>מעבדה: מיזוג מדידות</h3><div class="fusion-ui"></div></div>
+
+  <h2>כלים: למת היפוך מטריצות ומשלים שור</h2>
+  <div class="result"><p class="t">Matrix Inversion Lemma</p>
+  $$B^{-1}=A^{-1}+C^TD^{-1}C\iff B=A-AC^T(CAC^T+D)^{-1}CA$$</div>
+  <p>הצורה הימנית דורשת להפוך מטריצה בגודל המדידה ולא בגודל המצב, ולכן בדרך כלל זולה יותר. משלים שור: עבור \(M=\begin{bmatrix}A&B\\C&D\end{bmatrix}\), \(|M|=|A||D-CA^{-1}B|=|D||A-BD^{-1}C|\).</p>
+
+  <h2>גזירת המסנן</h2>
+  <p>מודל: \(x_{k+1}=A_kx_k+w_k\), \(y_{k+1}=H_{k+1}x_{k+1}+v_{k+1}\), עם \(w,v\) לבנים גאוסיים בעלי תוחלת אפס, קווריאנסים \(Q_k,R_k\), ו-\(x_0\sim\mathcal N(\hat x_0,P_0)\). מחפשים \(\hat x_k=E\{x_k\mid y^k\}\). חוק בייס עם המבנה המרקובי נותן:</p>
+  $$p(x_{k+1}\mid y^{k+1})=\frac{p(y_{k+1}\mid x_{k+1})\,p(x_{k+1}\mid y^k)}{p(y_{k+1}\mid y^k)}$$
+  <p>שלושת הגורמים גאוסיים:</p>
+  $$p(y_{k+1}\mid x_{k+1})=\mathcal N(Hx_{k+1},R),\quad p(x_{k+1}\mid y^k)=\mathcal N(\bar x_{k+1},M_{k+1}),\quad p(y_{k+1}\mid y^k)=\mathcal N(H\bar x_{k+1},HMH^T+R)$$
+  <p>עם \(\bar x_{k+1}=A_k\hat x_k\) ו-\(M_{k+1}=A_kP_kA_k^T+Q_k\). מכפלה של גאוסיאנים היא גאוסיאן, ואיסוף האיברים במעריך נותן:</p>
+  $$P_{k+1}=(M_{k+1}^{-1}+H^TR^{-1}H)^{-1},\qquad \hat x_{k+1}=P_{k+1}(M_{k+1}^{-1}\bar x_{k+1}+H^TR^{-1}y_{k+1})$$
+  <p>(צורת המידע). עם למת ההיפוך מקבלים את הצורה המוכרת:</p>
+  <div class="result"><p class="t">מסנן קלמן</p>
+  <p><b>חיזוי (קידום בזמן):</b></p>
+  $$\bar x_{k+1}=A_k\hat x_k,\qquad M_{k+1}=A_kP_kA_k^T+Q_k$$
+  <p><b>עדכון (מדידה):</b></p>
+  $$K_{k+1}=M_{k+1}H^T(HM_{k+1}H^T+R)^{-1}$$
+  $$\hat x_{k+1}=\bar x_{k+1}+K_{k+1}(y_{k+1}-H\bar x_{k+1})$$
+  $$P_{k+1}=(I-KH)M_{k+1}(I-KH)^T+KRK^T=(I-KH)M_{k+1}$$
+  <p>(הצורה הראשונה היא צורת ג'וזף, יציבה נומרית.)</p></div>
+
+  <h2>תכונות (מהסיכום, הרצאה 11)</h2>
+  <p>1. המסנן הוא מערכת דינמית לינארית עם משוב של שגיאת המדידה, והוא "מעתיק" את מודל המערכת.<br>
+  2. שני שלבים: חיזוי בזמן ועדכון במדידה.<br>
+  3. משוואות הקווריאנס \((M,P,K)\) לא תלויות במדידות, ולכן אפשר לחשב אותן off-line.<br>
+  4. עדכון מדידה מקטין את אי-הוודאות: \(P_{k+1\mid k+1}\le M_{k+1}\). קידום בזמן מגדיל אותה (מוסיף \(Q\)).<br>
+  5. סדרת החידושים (innovations) \(\tilde y_{k+1}=y_{k+1}-H\bar x_{k+1}\) היא רעש לבן עם קווריאנס \(HMH^T+R\). זה מבחן מעשי לבדוק שהמסנן מכויל.<br>
+  6. עקרון האורתוגונליות: \(E\{\tilde x_kF^T(y^k)\}=0\) לכל פונקציה \(F\) של המדידות.<br>
+  7. תחת הנחת גאוסיות, קלמן הוא המשערך האופטימלי מכל המשערכים. בלי גאוסיות, הוא עדיין המשערך <b>הלינארי</b> הטוב ביותר (BLUE).</p>
+  <div class="book"><b>Jazwinski</b> מציג את אותה גזירה בגישת בייס ומדגיש את התפקיד של צורת ג'וזף: היא נכונה לכל הגבר \(K\), לא רק לאופטימלי, ולכן היא גם הכלי לניתוח ביצועים של מסנן לא אופטימלי (למשל עם מודל שגוי).</div>
+
+  <h2>דוגמה: שערוך מרחק של רכב</h2>
+  <p>רכב נוסע במהירות נמדדת \(\tilde V=55\) מייל/שעה עם רעש \(\sigma_\varepsilon=0.3\). עם \(T=1\) שעה, \(x_{k+1}=x_k+\tilde VT+w_k\), \(q=\sigma_\varepsilon^2T=0.09\). מדידת מרחק \(y_1=55.3\) עם \(r=10^{-3}\). מתחילים מ-\(\hat x_0=0,\ P_0=0\):</p>
+  $$\bar x_1=55,\quad M_1=0.09,\quad K=\frac{0.09}{0.09+0.001}=0.989,\quad \hat x_1=55+0.989(0.3)=55.29,\quad P_1=9.9\cdot10^{-4}$$
+  <p>כאן \(K=q/(q+r)\): אם המדידה מדויקת מאוד \((r\to0)\) סומכים עליה \((K\to1)\); אם המודל מדויק \((q\to0)\) מתעלמים ממנה \((K\to0)\).</p>
+  <div class="lab" data-lab="kalman"><h3>מעבדה: מסנן קלמן סקלרי</h3>
+  <p>מודל \(x_{k+1}=ax_k+w_k\), \(y=x+v\). הגרף העליון מראה את ההגבר והקווריאנס מתכנסים למצב יציב (כמו בגרפים בסיכום), והתחתון מראה מסלול אמיתי, מדידות ושערוך. נסו \(P_0\) גדול וראו שהוא משפיע רק על התחלת התגובה.</p>
+  <div class="kalman-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה אפשר לחשב את \(K_k\) מראש?</summary><div>כי משוואות \(M\) ו-\(P\) תלויות רק ב-\(A,H,Q,R,P_0\) ולא במדידות עצמן.</div></details>
+  <details><summary>מה קורה ל-\(K\) כש-\(q/r\) גדל?</summary><div>ההגבר גדל: המודל פחות אמין יחסית למדידה, אז המסנן נותן משקל רב יותר למדידה ומגיב מהר יותר, אבל רועש יותר.</div></details>
+  <details><summary>איך בודקים בפועל שמסנן קלמן עובד נכון?</summary><div>בודקים שהחידושים \(\tilde y_k\) הם בעלי תוחלת אפס, לבנים, ועם קווריאנס \(HMH^T+R\).</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 7 ===================== -->
+<section class="week" id="w7" data-title="LQG עם מידע חלקי, זמן בדיד">
+  <p class="kicker">שבוע 7</p>
+  <h1>בעיית LQG עם מידע חלקי, זמן בדיד</h1>
+  <p class="source">מהסיכום: סוף הרצאה 12 והרצאה 13.</p>
+
+  <h2>ניסוח</h2>
+  $$x_{k+1}=A_kx_k+B_ku_k+w_k,\qquad y_{k+1}=H_{k+1}x_{k+1}+v_{k+1}$$
+  $$J=E\Big\{\sum_{k=0}^{N-1}\|x_{k+1}\|^2_{Q_k}+\|u_k\|^2_{R_k}\Big\},\qquad Q\ge0,\ R\gt0$$
+  <p>עכשיו הבקר רואה רק את המדידות: \(u_k=u_k(y^k,u^{k-1})\). את \(x_k\) הוא לא יודע.</p>
+
+  <h2>קלמן עם כניסה ידועה</h2>
+  <p>כשמוסיפים \(B_ku_k\) ידוע, החיזוי הופך ל-\(\bar x_{k+1}=A\hat x_k+Bu_k\). שגיאת החיזוי:</p>
+  $$\tilde x_{k+1\mid k}=A(x_k-\hat x_k)+w_k$$
+  <p>הכניסה <b>לא משפיעה</b> על השגיאה, ולכן גם לא על \(M\), \(P\) ו-\(K\). זו תכונת ההפרדה מכיוון המשערך.</p>
+
+  <h2>הפתרון ב-DP</h2>
+  <p>בשלב האחרון, עם \(S_N=Q\), צריך למזער \(E\{\|x_N\|^2_{S_N}+\|u\|_R^2\mid y^{N-1},u^{N-2}\}\). מציבים את משוואת המערכת ומשתמשים בכך ש-\(E\{x\mid y\}=\hat x\) ו-\(E\{xx^T\mid y\}=\hat x\hat x^T+P\):</p>
+  $$\big\|u+(B^TSB+R)^{-1}B^TSA\hat x\big\|^2_{B^TSB+R}-\|\hat x\|^2_{\Box}+E\{\|x\|^2_{A^TSA}\mid\cdot\}+\mathrm{tr}(WS)$$
+  <p>ולכן \(u^*_{N-1}=-(B^TSB+R)^{-1}B^TSA\hat x_{N-1}\): אותו הגבר כמו ב-LQR, מוכפל במצב המשוערך. המחיר שנשאר הוא ריבועי ב-\(x\) ועוד איברים שלא תלויים ב-\(u\), כך שהאינדוקציה עובדת.</p>
+  <div class="result"><p class="t">אלגוריתם LQG בזמן בדיד</p>
+  <p><b>הליכה לאחור</b> (ריקאטי של הבקר, כמו ב-LQR), \(S_N=Q\):</p>
+  $$S_k=A^TS_{k+1}A-A^TS_{k+1}B(B^TS_{k+1}B+R)^{-1}B^TS_{k+1}A+Q$$
+  <p><b>הליכה קדימה:</b> מסנן קלמן מחשב את \(\hat x_k,P_k\), והבקר הוא</p>
+  $$u_k^*=-(B^TS_{k+1}B+R)^{-1}B^TS_{k+1}A\,\hat x_k$$
+  <p><b>המחיר</b>, עם \(\Delta_i=A^TS_{i+1}B(B^TS_{i+1}B+R)^{-1}B^TS_{i+1}A\):</p>
+  $$J_k^*=\|\hat x_k\|^2_{A^TS_{k+1}A-\Delta_k}+\mathrm{tr}\big(P_kA^TS_{k+1}A\big)+\sum_{i=k+1}^{N-1}\mathrm{tr}(P_i\Delta_i)+\sum_{i=k}^{N-1}\mathrm{tr}(WS_{i+1})$$
+  <p>האיבר \(\mathrm{tr}(P_i\Delta_i)\) הוא "מחיר אי-הוודאות" בשערוך: מה שמשלמים על כך שהבקר רואה \(\hat x\) ולא \(x\).</p></div>
+
+  <h2>עקרון ההפרדה</h2>
+  <p>זו התוצאה המרכזית של החלק הבדיד בקורס: את הבעיה אפשר לפרק לשתי בעיות נפרדות.</p>
+  <p><b>א.</b> בעיית בקרה: LQR דטרמיניסטי, שנותן את ההגבר. היא לא יודעת כלום על הרעשים.<br>
+  <b>ב.</b> בעיית שערוך: מסנן קלמן, שנותן את \(\hat x\). הוא לא יודע כלום על \(Q,R\) של המחיר.<br>
+  <b>ג.</b> המחיר מורכב מהמחיר של LQR, מהשפעת הרעש בתהליך, ומאי-הוודאות בשערוך (דרך \(P_i\)). רק החלק האחרון קושר בין הבעיות.</p>
+  <div class="book"><b>Bryson &amp; Ho</b> קוראים לתוצאה הזו "certainty-equivalence": הבקר האופטימלי מתנהג כאילו \(\hat x\) הוא המצב האמיתי. התוצאה תלויה בשלוש הנחות: מערכת לינארית, מחיר ריבועי ורעש גאוסי אדיטיבי. שבוע 5 הראה שהיא נשברת כשהרעש כפלי.</div>
+
+  <div class="lab" data-lab="lqg"><h3>מעבדה: LQG סקלרי</h3>
+  <p>מערכת \(x_{k+1}=ax_k+bu_k+w_k\), \(y=x+v\). משווים שלושה מקרים על אותם רעשים: LQR עם מידע מלא (רואה את \(x\)), LQG (קלמן + LQR), ובקר נאיבי שמזין את המדידה הגולמית ישר ל-LQR. הגדילו את רעש המדידה \(r\) כדי לראות את ערך המסנן.</p>
+  <div class="lqg-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>מה משותף ל-LQG ול-LQR, ומה שונה?</summary><div>ההגבר זהה. ההבדל הוא שב-LQG מכפילים אותו ב-\(\hat x\) מקלמן במקום ב-\(x\), והמחיר כולל איברי עקבה נוספים שנובעים מאי-הוודאות \(P\).</div></details>
+  <details><summary>למה \(u_k\) לא משפיע על \(P_k\)?</summary><div>כי שגיאת השערוך לא תלויה בכניסה הידועה: היא מופיעה באותה צורה גם במצב וגם בשערוך ומתבטלת.</div></details>
+  </div>
+</section>
+<!-- ===================== WEEK 8 ===================== -->
+<section class="week" id="w8" data-title="משוואת המילטון-ג'קובי">
+  <p class="kicker">שבוע 8</p>
+  <h1>משוואת המילטון-ג'קובי: מעבר לזמן רציף</h1>
+  <p class="source">מהסיכום: הרצאה 14.</p>
+
+  <h2>למה זמן רציף?</h2>
+  <p>מערכות פיזיקליות מתוארות במשוואות דיפרנציאליות. הניתוח והתכנון בזמן רציף נותנים תובנות שקשה לראות בבדיד, והמעבר מסתדר כשזמן הדגימה קטן.</p>
+  <p>נתונה \(\dot x=f(t,x)\), \(x(t_0)=x_0\). כדי שיהיה פתרון יחיד דורשים <b>תנאי גידול</b> \(|f(t,x)|\le K(1+|x|)\) ו<b>תנאי ליפשיץ</b> \(|f(t,x)-f(t,y)|\le K|x-y|\). דרישות דומות מוטלות על חוק הבקרה \(u(t,x)\) ועל פונקציית המחיר \(L\).</p>
+
+  <h2>ניסוח</h2>
+  $$J=\int_{t_0}^{t_f}L(x,u,\tau)\,d\tau+g(x_{t_f}),\qquad \dot x=f(x,u,t),\ x(t_0)=x_0$$
+  <p>נגדיר את המחיר האופטימלי מנקודה \((x,t)\) ועד הסוף:</p>
+  $$J^\circ(x,t)=\min_{u[t,t_f]}\Big[\int_t^{t_f}L\,d\tau+g(x_{t_f})\Big],\qquad J^\circ(x_{t_f},t_f)=g(x_{t_f}).$$
+
+  <h2>גזירה: בלמן על אינטרוול קצר</h2>
+  <p>שיטת ההדבקה: על \([t,s]\) מפעילים חוק כלשהו \(u\), ומ-\(s\) עד \(t_f\) את האופטימלי. לפי נוסחת השינוי בזמן, \(J^\circ(x_s,s)=J^\circ(x,t)+\int_t^s dJ^\circ\). אם \(u^\circ\) אופטימלי, אז המחיר של כל חוק אחר גדול לפחות כמוהו:</p>
+  $$0\le\int_t^s\Big\{L(x_\tau,u_\tau,\tau)+\frac{dJ^\circ}{d\tau}\Big\}d\tau\quad\forall s\ \Rightarrow\ 0\le L+\frac{\partial J^\circ}{\partial\tau}+\frac{\partial J^\circ}{\partial x}f.$$
+  <p>עם שוויון כאשר \(u=u^\circ\). כלומר:</p>
+  <div class="result"><p class="t">משוואת המילטון-ג'קובי (HJ)</p>
+  $$-\frac{\partial J^\circ}{\partial t}(x,t)=\min_{u\in U}\Big[\frac{\partial J^\circ}{\partial x}(x,t)\,f(x,u,t)+L(x,u,t)\Big],\qquad J^\circ(x,t_f)=g(x)$$</div>
+  <p>זו משוואה דיפרנציאלית חלקית ב-\(J^\circ\). אם מוצאים פתרון חלק לה, הבקר שמשיג את המינימום אופטימלי: זה <b>תנאי מספיק</b>. המשמעות הפיזיקלית: קצב הירידה של המחיר האופטימלי בזמן שווה למחיר הרגעי ועוד השינוי במחיר שנובע מתנועת המצב.</p>
+  <div class="book"><b>Bryson &amp; Ho</b> מציגים את HJ גם כגבול של משוואת בלמן הבדידה כש-\(\Delta t\to0\): \(J^\circ(x,t)=\min_u[L\Delta t+J^\circ(x+f\Delta t,t+\Delta t)]\), פיתוח טיילור מסדר ראשון ומחלקים ב-\(\Delta t\). הם גם מקשרים את \(\partial J^\circ/\partial x\) למשתנה הנלווה (costate) \(\lambda\) של עקרון המינימום של פונטריאגין.</div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>מה תנאי השפה של משוואת HJ?</summary><div>\(J^\circ(x,t_f)=g(x)\): בזמן הסופי נשאר רק המחיר הסופי. לכן פותרים אחורה בזמן.</div></details>
+  <details><summary>למה HJ הוא תנאי מספיק ולא הכרחי?</summary><div>הגזירה מניחה ש-\(J^\circ\) גזירה ברציפות. יש בעיות שבהן פונקציית המחיר האופטימלי לא חלקה, ואז HJ לא מתקיימת במובן הקלסי למרות שקיים פתרון אופטימלי.</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 9 ===================== -->
+<section class="week" id="w9" data-title="LQR בזמן רציף">
+  <p class="kicker">שבוע 9</p>
+  <h1>בעיית LQR בזמן רציף</h1>
+  <p class="source">מהסיכום: הרצאה 15.</p>
+
+  <h2>ניסוח</h2>
+  $$\dot x=F_tx_t+B_tu_t,\qquad J=\int_0^{t_f}\big(\|x_\tau\|^2_{Q_\tau}+\|u_\tau\|^2_{R_\tau}\big)d\tau+\|x_{t_f}\|^2_{S_f}$$
+  <p>עם \(Q,S_f\ge0\) ו-\(R\gt0\).</p>
+
+  <h2>פתרון דרך HJ</h2>
+  <p>מנחשים \(J^\circ(x,t)=\|x\|^2_{S_t}\) עם \(S_t=S_t^T\). אז \(\partial J^\circ/\partial t=x^T\dot S x\) ו-\(\partial J^\circ/\partial x=2x^TS\), ו-HJ הופכת ל:</p>
+  $$0=x^T\dot Sx+\min_u\big[2x^TS(Fx+Bu)+\|x\|_Q^2+\|u\|_R^2\big].$$
+  <p>השלמה לריבוע ב-\(u\) נותנת \((u+R^{-1}B^TSx)^TR(u+R^{-1}B^TSx)-\|x\|^2_{SBR^{-1}B^TS}\), ולכן:</p>
+  <div class="result"><p class="t">LQR רציף</p>
+  $$u^\circ(x,t)=-R_t^{-1}B_t^TS_tx_t$$
+  $$-\dot S_t=F_t^TS_t+S_tF_t-S_tB_tR_t^{-1}B_t^TS_t+Q_t,\qquad S(t_f)=S_f$$
+  $$J^\circ(x,t)=\|x\|^2_{S_t}$$</div>
+  <p>מהצבת \(u^\circ\) מקבלים \(0=x^T(\dot S+F^TS+SF-SBR^{-1}B^TS+Q)x\) לכל \(x\), ומכיוון שהמטריצה בסוגריים סימטרית, היא חייבת להתאפס.</p>
+
+  <h2>מסקנות</h2>
+  <p>1. האלגוריתם: פותרים את ריקאטי <b>אחורה</b> מ-\(S_f\), ואז מריצים קדימה \(\dot x=(F-BK^\circ)x\) עם \(K^\circ=R^{-1}B^TS\).<br>
+  2. למשוואת ריקאטי יש פתרון יחיד \(S_t\ge0\).<br>
+  3. ההגבר לא תלוי במצב, ולכן מחושב off-line.<br>
+  4. הפתרון התקבל מתנאי מספיק בלבד, כך שאין צורך לבדוק בנפרד שזה מינימום.</p>
+  <div class="book"><b>Anderson &amp; Moore</b>: עבור מערכת קבועה בזמן ו-\(t_f\to\infty\), אם \((F,B)\) ניתנת לייצוב ו-\((F,Q^{1/2})\) ניתנת לגילוי, \(S_t\) מתכנס לפתרון החיובי היחיד של משוואת ריקאטי האלגברית \(0=F^TS+SF-SBR^{-1}B^TS+Q\), והחוג הסגור יציב אסימפטוטית. הם מראים גם תכונות עמידות של LQR: מרווח פאזה של לפחות 60° ומרווח הגבר אינסופי (לכל ערוץ, במקרה של \(R\) אלכסונית).</div>
+
+  <div class="lab" data-lab="clqr"><h3>מעבדה: ריקאטי רציף סקלרי</h3>
+  <p>\(\dot x=fx+bu\). המעבדה פותרת את ריקאטי אחורה (RK4) ומציגה את \(S(t)\), את ההגבר, ואת מסלול המצב. הקו המקווקו הוא הפתרון של ריקאטי האלגברית: \(s_\infty=\frac{r}{b^2}\big(f+\sqrt{f^2+b^2q/r}\big)\).</p>
+  <div class="clqr-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>מה הקטב של החוג הסגור במצב היציב, במקרה הסקלרי?</summary><div>\(f-b^2s_\infty/r=-\sqrt{f^2+b^2q/r}\). הוא תמיד שלילי, גם אם \(f\gt0\) (מערכת לא יציבה).</div></details>
+  <details><summary>מה קורה כש-\(r\to0\)?</summary><div>הבקרה זולה, ההגבר גדל ללא גבול והקטב בורח ל-\(-\infty\): תגובה מהירה מאוד עם מאמץ גדול מאוד ("cheap control").</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 10 ===================== -->
+<section class="week" id="w10" data-title="משוואות איטו ומשוואת HJB">
+  <p class="kicker">שבוע 10</p>
+  <h1>משוואות דיפרנציאליות סטוכסטיות מסוג איטו, ומשוואת HJB</h1>
+  <p class="source">מהסיכום: הרצאות 16–19.</p>
+
+  <h2>תנועה בראונית כגבול של הילוך אקראי</h2>
+  <p>הילוך אקראי: \(x_k=\sum_{i=1}^k\xi_i\), כאשר \(\xi_i=\pm\Delta x\) בהסתברות חצי. אז \(E x_k=0\) ו-\(E x_k^2=k\Delta x^2=\frac{T}{\Delta t}\Delta x^2\). כדי לקבל גבול סופי כש-\(\Delta t\to0\) צריך \(\Delta x^2/\Delta t=\sigma^2\) קבוע, ואז השונות היא \(\sigma^2T\).</p>
+  <div class="result"><p class="t">תנועה בראונית (BM) \(\{\beta_t\}_{t\ge0}\) עם שונות \(\sigma^2\)</p>
+  <p>1. \(\beta_0=0\) בהסתברות 1.<br>2. התוספות \(\Delta\beta_t=\beta_{t+\Delta t}-\beta_t\) בלתי תלויות על פני אינטרוולים זרים.<br>3. \(E\beta_t=0\), \(E\{\beta_t\beta_s\}=\sigma^2\min(t,s)\).<br>4. \(\beta_t\) גאוסי, \(\Delta\beta_t\sim\mathcal N(0,\sigma^2\Delta t)\).</p></div>
+  <p>"רעש לבן רציף" הוא הנגזרת הפורמלית: \(w^\Delta=\Delta\beta/\Delta t\sim\mathcal N(0,\sigma^2/\Delta t)\), והשונות מתפוצצת כש-\(\Delta t\to0\). לכן \(E\{w_tw_{t+\tau}\}=\sigma^2\delta(\tau)\), ו-BM עצמה לא גזירה בשום מקום. זה למה צריך חשבון חדש.</p>
+  <div class="lab" data-lab="bm"><h3>מעבדה: מהילוך אקראי לתנועה בראונית</h3>
+  <p>מסלולים של הילוך אקראי עם צעד \(\Delta x=\sigma\sqrt{\Delta t}\). המעטפת המקווקוות היא \(\pm2\sigma\sqrt t\). הקטינו את \(\Delta t\) וראו שהסטטיסטיקה לא משתנה אבל המסלולים נעשים "מחוספסים" יותר.</p>
+  <div class="bm-ui"></div></div>
+
+  <h2>האינטגרל הסטוכסטי של איטו</h2>
+  <p>עבור \(g_t\) רציף בממוצע ריבועי ו-\(E g_t^2\lt\infty\), מקרבים אותו בפונקציות מדרגה \(g^\nu\) שנלקחות בקצה <b>השמאלי</b> של כל אינטרוול:</p>
+  $$\int_a^bg_t\,d\beta_t\equiv\underset{\nu\to\infty}{\mathrm{l.i.m.}}\sum_{i=0}^{\nu-1}g_{t_i}\,\Delta\beta_i$$
+  <p>הבחירה בקצה השמאלי היא הלב של איטו: \(g_{t_i}\) בלתי תלוי ב-\(\Delta\beta_i\). מזה נובע:</p>
+  <div class="result">$$E\Big\{\int_a^bg_td\beta_t\Big\}=0,\qquad E\Big\{\Big(\int_a^bg_td\beta_t\Big)^2\Big\}=\sigma^2\int_a^bE\{g_t^2\}dt,\qquad \int_a^bg_t(d\beta_t)^2=\sigma^2\int_a^bg_tdt$$</div>
+  <p>האחרון אומר ש-\((d\beta)^2=\sigma^2dt\): זה לא אפס, וזה מקור התיקון של איטו.</p>
+
+  <h2>משוואה דיפרנציאלית סטוכסטית</h2>
+  $$dx_t=f(t,x_t)\,dt+G(t,x_t)\,d\beta_t\quad\Longleftrightarrow\quad x_t=x_0+\int_{t_0}^tf\,d\tau+\int_{t_0}^tG\,d\beta_\tau$$
+  <p>האינטגרל הראשון הוא אינטגרל רגיל, השני הוא אינטגרל איטו. תחת תנאי גידול וליפשיץ, ו-\(x_0\) בלתי תלוי ב-\(d\beta\), יש פתרון יחיד והוא תהליך מרקובי.</p>
+
+  <h2>כלל השרשרת של איטו</h2>
+  <p>פיתוח טיילור מסדר שני של \(\phi(x,t)\), עם \(dx=fdt+Gd\beta\) ו-\(E\{d\beta d\beta^T\}=Qdt\). איברים מסדר \(dt^2\) ו-\(dt\,d\beta\) זניחים, אבל \(d\beta d\beta^T\sim Qdt\) לא:</p>
+  <div class="result"><p class="t">נוסחת איטו</p>
+  $$d\phi=\frac{\partial\phi}{\partial t}dt+\frac{\partial\phi}{\partial x^T}dx+\frac12\,\mathrm{tr}\Big(GQG^T\frac{\partial^2\phi}{\partial x\partial x^T}\Big)dt$$
+  <p>האיבר האחרון הוא <b>תוספת איטו</b>, ואין לו מקבילה בחשבון רגיל.</p></div>
+  <h3>דוגמה 1: מומנט שני</h3>
+  <p>\(dx=\frac{\sigma^2}{2}x\,dt+x\,d\beta\), \(E d\beta^2=\sigma^2dt\). עם \(\phi=x^2\): \(\phi_x=2x\), \(\phi_{xx}=2\):</p>
+  $$d\phi=2x\Big(\frac{\sigma^2}2xdt+xd\beta\Big)+\frac12\sigma^2x^2\cdot2\,dt=2\sigma^2\phi\,dt+2\phi\,d\beta$$
+  <p>לוקחים תוחלת (האיבר עם \(d\beta\) מתאפס כי \(\phi_t\) לא תלוי ב-\(d\beta_t\)): \(\frac{d}{dt}C_{xx}=2\sigma^2C_{xx}\), ולכן \(C_{xx}(t)=e^{2\sigma^2t}C_{xx}(0)\).</p>
+  <div class="lab" data-lab="gbm"><h3>מעבדה: בדיקת הדוגמה במונטה קרלו</h3>
+  <p>סימולציית אוילר-מרויאמה של \(dx=\frac{\sigma^2}2xdt+xd\beta\) עם \(x_0=1\), והשוואת הממוצע האמפירי של \(x^2\) לנוסחה \(e^{2\sigma^2t}\). בלי תוספת איטו היינו מקבלים \(e^{\sigma^2t}\), שגוי.</p>
+  <div class="gbm-ui"></div></div>
+  <h3>דוגמה 2: משוואת הקווריאנס</h3>
+  <p>עבור \(dx=Fxdt+Gd\beta\) ו-\(\Phi=xx^T\), נוסחת איטו לכל איבר נותנת \(d\Phi=(F\Phi+\Phi F^T+GQG^T)dt+(Gd\beta x^T+xd\beta^TG^T)\). לוקחים תוחלת:</p>
+  <div class="result"><p class="t">משוואת ליאפונוב הדיפרנציאלית</p>
+  $$\frac{d}{dt}C_{xx}=FC_{xx}+C_{xx}F^T+GQG^T$$</div>
+
+  <h2>האופרטור הדיפרנציאלי ונוסחת דינקין</h2>
+  <p>בצורה אינטגרלית: \(\phi(x_s,s)=\phi(x_t,t)+\int_t^s\big(\frac{\partial\phi}{\partial\tau}+\mathcal L[\phi]\big)d\tau+\int_t^s\frac{\partial\phi}{\partial x^T}Gd\beta\), עם</p>
+  $$\mathcal L^u[\phi]=\frac{\partial\phi}{\partial x^T}f(x,u,t)+\frac12\mathrm{tr}\Big(GWG^T\frac{\partial^2\phi}{\partial x\partial x^T}\Big)$$
+  <p>(ה-differential generator של התהליך). אם \(G=0\), \(\mathcal L[\phi]=\phi_x f\) וחוזרים לחשבון רגיל.</p>
+
+  <h2>משוואת HJB</h2>
+  <p>הבעיה: \(dx=f(x,u,t)dt+G\,dw\), \(E\{dwdw^T\}=Wdt\), מחיר \(J=E\{\int_t^{t_f}L\,d\tau+g(x_{t_f})\mid x(t)=x\}\), עם מידע מלא על המצב. אותה טכניקת הדבקה כמו ב-HJ, אבל עם תוחלת ונוסחת איטו במקום כלל השרשרת. התכונה המרקובית מאפשרת להחליף \(E\{E\{\cdot\mid x_s,x_t\}\mid x_t\}=E\{J^\circ(x_s,s)\mid x_t\}\):</p>
+  <div class="result"><p class="t">משוואת המילטון-ג'קובי-בלמן</p>
+  $$-\frac{\partial J^\circ}{\partial t}=\min_{u\in U}\Big[\mathcal L^u[J^\circ]+L(x,u,t)\Big],\qquad J^\circ(x,t_f)=g(x)$$</div>
+  <p>ההבדל היחיד מ-HJ הוא איבר איטו \(\frac12\mathrm{tr}(GWG^TJ^\circ_{xx})\): משוואה פרבולית מסדר שני ב-\(x\) במקום מסדר ראשון.</p>
+  <div class="book"><b>Jazwinski</b> (פרק על משוואות דיפרנציאליות סטוכסטיות) מבחין בין אינטגרל איטו לאינטגרל סטרטונוביץ', שבו לוקחים את נקודת האמצע. לסטרטונוביץ' יש כלל שרשרת רגיל אבל הוא לא מרטינגל. ההמרה במקרה הסקלרי: \(dx=fdt+G\circ d\beta\) (סטרטונוביץ') שקולה ל-\(dx=(f+\tfrac12\sigma^2GG_x)dt+Gd\beta\) (איטו). בקורס, וברוב תורת הבקרה, משתמשים באיטו.</div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה \(E\{\int g\,d\beta\}=0\)?</summary><div>כי באיטו \(g_{t_i}\) נלקח בתחילת האינטרוול ולכן בלתי תלוי ב-\(\Delta\beta_i\), שתוחלתו אפס.</div></details>
+  <details><summary>מאיפה מגיע איבר ה-trace בנוסחת איטו?</summary><div>מהאיבר מסדר שני בטיילור, \(\frac12dx^T\phi_{xx}dx\), שבו \(d\beta d\beta^T\approx Qdt\) הוא מסדר \(dt\) ולכן לא זניח.</div></details>
+  <details><summary>מה ההבדל בין HJ ל-HJB?</summary><div>ב-HJB נוסף \(\frac12\mathrm{tr}(GWG^TJ_{xx})\) בגלל הרעש. בדוגמת LQG זה מוסיף לפונקציית המחיר איבר \(\alpha(t)\) שלא תלוי ב-\(x\).</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 11 ===================== -->
+<section class="week" id="w11" data-title="LQG עם מידע מלא, זמן רציף">
+  <p class="kicker">שבוע 11</p>
+  <h1>בעיית LQG עם מידע מלא, זמן רציף</h1>
+  <p class="source">מהסיכום: הרצאה 20.</p>
+
+  <h2>ניסוח</h2>
+  $$dx_t=[F(t)x_t+B(t)u_t]dt+G(t)dw_t,\qquad E\{dwdw^T\}=Wdt$$
+  $$J=E\Big\{\int_0^{t_f}\big(\|x\|^2_{Q}+\|u\|^2_{R}\big)d\tau+\|x_{t_f}\|^2_{S_f}\Big\}$$
+
+  <h2>פתרון דרך HJB</h2>
+  <p>מנחשים \(J^\circ(x,t)=\|x\|^2_{S(t)}+\alpha(t)\), עם \(S=S^T\ge0\). אז \(J^\circ_t=x^T\dot Sx+\dot\alpha\), \(J^\circ_x=2x^TS\), \(J^\circ_{xx}=2S\). הצבה ב-HJB:</p>
+  $$0=x^T\dot Sx+\dot\alpha+\min_u\big[2x^TS(Fx+Bu)+\mathrm{tr}(GWG^TS)+\|x\|^2_Q+\|u\|^2_R\big]$$
+  <p>המינימיזציה לפי \(u\) זהה למקרה הדטרמיניסטי: \(u^\circ=-R^{-1}B^TSx\). אחרי הצבה מפרידים בין האיבר הריבועי ב-\(x\) לבין האיבר הקבוע:</p>
+  <div class="result"><p class="t">LQG עם מידע מלא</p>
+  $$u^\circ=-R^{-1}B^TS_tx_t$$
+  $$-\dot S=F^TS+SF-SBR^{-1}B^TS+Q,\qquad S(t_f)=S_f$$
+  $$-\dot\alpha=\mathrm{tr}(GWG^TS),\ \ \alpha(t_f)=0\ \Rightarrow\ \alpha(t)=\int_t^{t_f}\mathrm{tr}(G_\tau WG_\tau^TS_\tau)d\tau$$
+  $$J^\circ(x,t)=\|x\|^2_{S_t}+\int_t^{t_f}\mathrm{tr}(GWG^TS)\,d\tau$$</div>
+  <p>זו המקבילה הרציפה של שבוע 5, דוגמה 1: הבקר זהה לבקר הדטרמיניסטי, והרעש רק מוסיף מחיר שלא תלוי במצב. המחיר הנוסף גדל עם עוצמת הרעש \(W\) ועם \(S\), כלומר עם כמה "כואב" למערכת להיות מוזזת.</p>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה ניחוש \(\|x\|_S^2\) לבד לא מספיק כאן?</summary><div>כי איבר איטו \(\mathrm{tr}(GWG^TS)\) לא תלוי ב-\(x\), ואין איבר בניחוש שיאזן אותו. צריך להוסיף \(\alpha(t)\).</div></details>
+  <details><summary>האם הרעש משפיע על ההגבר?</summary><div>לא. \(S\) נקבעת מאותה משוואת ריקאטי כמו ב-LQR, ו-\(W\) מופיע רק במשוואה של \(\alpha\).</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 12 ===================== -->
+<section class="week" id="w12" data-title="LQG עם מידע חלקי, זמן רציף">
+  <p class="kicker">שבוע 12</p>
+  <h1>בעיית LQG עם מידע חלקי, זמן רציף</h1>
+  <p class="source">מהסיכום: הרצאות 21–22.</p>
+
+  <h2>ניסוח</h2>
+  $$dx_t=(F_tx_t+B_tu_t)dt+G_tdw_t,\qquad dz_t=H_tx_tdt+dv_t$$
+  <p>\(v,w\) תנועות בראוניות בלתי תלויות עם \(V=V^T\gt0\), \(W\ge0\). הבקר רואה רק את ההיסטוריה \(Z^t=\{z(s):0\le s\le t\}\).</p>
+
+  <h2>מסנן קלמן-ביוסי</h2>
+  <p>בזמן רציף אין שלבי חיזוי ועדכון נפרדים, הכל קורה יחד:</p>
+  <div class="result"><p class="t">משערך קלמן רציף</p>
+  $$d\hat x_t=(F\hat x_t+Bu_t)dt+K_t\big(dz_t-H\hat x_tdt\big),\qquad K_t=P_tH^TV^{-1}$$
+  $$\dot P=FP+PF^T-PH^TV^{-1}HP+GWG^T,\qquad P(0)=P_0$$</div>
+  <p>בריקאטי של המסנן: \(FP+PF^T\) הוא דינמיקה טבעית, \(GWG^T\) הוא תוספת אי-ודאות מהרעש, ו-\(-PH^TV^{-1}HP\) היא הקטנת הקווריאנס בזכות המדידות.</p>
+
+  <h2>תהליך החידושים</h2>
+  <p>\(d\tilde z_t=dz_t-H\hat x_tdt=H\tilde x_tdt+dv_t\). מהסיכום: \(E\{d\tilde z\}=0\), התוספות שלו לא קורלטיביות זו בזו, ו-\(E\{d\tilde zd\tilde z^T\}=Vdt\) (האיבר \(HPH^Tdt^2\) זניח). כלומר <b>\(\tilde z\) הוא תנועה בראונית עם אותה עוצמה \(V\)</b>, ולכן אפשר להתייחס למשוואת המשערך כמשוואת איטו רגילה:</p>
+  $$d\hat x_t=(F\hat x_t+Bu_t)dt+K_t\,d\tilde z_t.$$
+  <p>עקרון האורתוגונליות \(E\{\tilde x_tF^T(Z^t)\}=0\) מאפשר לפרק את המחיר: \(E\{\|x\|^2_Q\mid Z^t\}=\|\hat x\|_Q^2+\mathrm{tr}(PQ)\). לכן:</p>
+  $$J=E\Big\{\int_0^{t_f}\big(\|\hat x\|^2_Q+\|u\|^2_R\big)d\tau+\|\hat x_{t_f}\|^2_{S_f}\Big\}+\int_0^{t_f}\mathrm{tr}(PQ)d\tau+\mathrm{tr}(P_{t_f}S_f)$$
+  <p>זו בעיית LQG עם <b>מידע מלא</b> על \(\hat x\), עם "רעש תהליך" \(Kd\tilde z\) בעוצמה \(KVK^T\). שבוע 11 פותר אותה מיד.</p>
+
+  <div class="result"><p class="t">אלגוריתם LQG רציף עם מידע חלקי</p>
+  $$u^\circ=-R^{-1}B^TS_t\hat x_t,\qquad -\dot S=F^TS+SF-SBR^{-1}B^TS+Q,\ \ S(t_f)=S_f$$
+  $$d\hat x=(F\hat x+Bu^\circ)dt+K_t(dz-H\hat xdt),\qquad K_t=P_tH^TV^{-1}$$
+  $$\dot P=FP+PF^T-PH^TV^{-1}HP+GWG^T,\ \ P(0)=P_0$$
+  $$J^\circ=\|\hat x\|^2_{S_t}+\int_t^{t_f}\mathrm{tr}(K_\tau VK_\tau^TS_\tau)d\tau+\int_t^{t_f}\mathrm{tr}(P_\tau Q_\tau)d\tau+\mathrm{tr}(P_{t_f}S_f)$$</div>
+  <p>חוק הבקרה לינארי ב-\(\hat x\), וההגבר זהה למקרה הדטרמיניסטי: זה עקרון ההפרדה בזמן רציף.</p>
+
+  <h2>בקר LQG סטציונרי</h2>
+  <p>עבור \(F,B,H,V,W,Q,R\) קבועים ואופק אינסופי, ממזערים את המחיר הממוצע \(E\{\lim\frac1t\int_0^t(\|x\|_Q^2+\|u\|_R^2)d\tau\}\). הנחת ארגודיות מאפשרת להחליף ממוצע בזמן בממוצע על פני ההתפלגות הסטציונרית.</p>
+  <div class="result"><p class="t">משפט: LQG סטציונרי</p>
+  <p>אם \((F,B,\sqrt Q)\) ו-\((F,H,\sqrt W)\) ניתנות לייצוב ולגילוי:</p>
+  $$u^\circ=-K_c\hat x,\quad K_c=R^{-1}B^TS,\qquad 0=F^TS+SF+Q-SBR^{-1}B^TS\ \ (\text{ARE})$$
+  $$d\hat x=(F-BK_c)\hat xdt+K_e(dz-H\hat xdt),\quad K_e=PH^TV^{-1},\qquad 0=FP+PF^T+GWG^T-PH^TV^{-1}HP$$</div>
+  <p>הערכים העצמיים של החוג הסגור הם האיחוד של \(\mathrm{eig}(F-BK_c)\) ו-\(\mathrm{eig}(F-K_eH)\): הבקר והמשערך מתוכננים בנפרד ולא מפריעים זה לזה.</p>
+  <div class="book"><b>Anderson &amp; Moore</b> מראים שבניגוד ל-LQR, ל-LQG <b>אין</b> מרווחי עמידות מובטחים: ההפרדה נכונה לאופטימליות אבל לא לעמידות. מכאן הגיעו טכניקות כמו LTR (Loop Transfer Recovery) בשנות ה-80.</div>
+  <div class="lab" data-lab="slqg"><h3>מעבדה: LQG סטציונרי סקלרי</h3>
+  <p>מחשבת את פתרונות שתי משוואות ריקאטי האלגבריות, את שני ההגברים ואת קטבי החוג הסגור. שימו לב שהקטבים של הבקר לא תלויים ב-\(v,w\), ושל המשערך לא תלויים ב-\(q,r\).</p>
+  <div class="slqg-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>למה החידושים \(\tilde z\) הם תנועה בראונית?</summary><div>תוחלתם אפס, התוספות שלהם בלתי מתואמות זו בזו (אורתוגונליות), והקווריאנס של התוספת הוא \(Vdt\), כי \(H\tilde xdt\) תורם רק מסדר \(dt^2\).</div></details>
+  <details><summary>מה ארבעת חלקי המחיר האופטימלי?</summary><div>מחיר המצב המשוערך \(\|\hat x\|_S^2\), מחיר "רעש" ההגבר \(\int\mathrm{tr}(KVK^TS)\), מחיר אי-הוודאות \(\int\mathrm{tr}(PQ)\), ומחיר אי-הוודאות הסופית \(\mathrm{tr}(P_{t_f}S_f)\).</div></details>
+  </div>
+</section>
+
+<!-- ===================== WEEK 13 ===================== -->
+<section class="week" id="w13" data-title="Jump LQG: מערכות עם מיתוגים אקראיים">
+  <p class="kicker">שבוע 13</p>
+  <h1>LQG של מערכות עם מיתוגים אקראיים (Jump LQG)</h1>
+  <p class="source">הנושא לא מופיע בסיכום שהועלה. החומר כאן נבנה מהספרות ומההרחבה הטבעית של שבועות 10–12, וכדאי להשוות אותו לחומר שיינתן בשיעור.</p>
+
+  <h2>המודל</h2>
+  <p>מערכת שהפרמטרים שלה "קופצים" בין כמה מצבי עבודה (תקלה ברכיב, שינוי עומס, החלפת מצב טיסה). מצב העבודה \(\theta_t\in\{1,\dots,m\}\) הוא שרשרת מרקוב בזמן רציף עם קצבי מעבר \(\lambda_{ij}\ge0\) \((i\ne j)\) ו-\(\lambda_{ii}=-\sum_{j\ne i}\lambda_{ij}\):</p>
+  $$P\{\theta_{t+\Delta}=j\mid\theta_t=i\}=\lambda_{ij}\Delta+o(\Delta),\qquad i\ne j$$
+  $$dx_t=\big[F(\theta_t)x_t+B(\theta_t)u_t\big]dt+G(\theta_t)dw_t$$
+  $$J=E\Big\{\int_0^{t_f}\big(\|x\|^2_{Q(\theta)}+\|u\|^2_{R(\theta)}\big)d\tau+\|x_{t_f}\|^2_{S_f(\theta_{t_f})}\Big\}$$
+  <p>זו מערכת "היברידית": מצב רציף \(x\) ומצב בדיד \(\theta\). הזוג \((x_t,\theta_t)\) הוא תהליך מרקובי.</p>
+
+  <h2>HJB עם קפיצות</h2>
+  <p>נניח מידע מלא על \(x\) ועל \(\theta\). לגנרטור של התהליך המשותף נוסף איבר קפיצה, שמתאר את שינוי המחיר הצפוי כשהמצב הבדיד מתחלף:</p>
+  $$\mathcal L^u[J](x,i)=J_x\big(F_ix+B_iu\big)+\tfrac12\mathrm{tr}\big(G_iWG_i^TJ_{xx}\big)+\sum_{j}\lambda_{ij}J(x,j)$$
+  <p>מנחשים \(J^\circ(x,i,t)=\|x\|^2_{S_i(t)}+\alpha_i(t)\), אחד לכל מצב עבודה. אותה השלמה לריבוע כמו בשבוע 11 נותנת:</p>
+  <div class="result"><p class="t">משוואות ריקאטי מצומדות</p>
+  <p>כאשר \(\theta_t=i\):</p>
+  $$u^\circ=-R_i^{-1}B_i^TS_i(t)\,x_t$$
+  $$-\dot S_i=F_i^TS_i+S_iF_i-S_iB_iR_i^{-1}B_i^TS_i+Q_i+\sum_{j=1}^m\lambda_{ij}S_j,\qquad S_i(t_f)=S_{f,i}$$
+  $$-\dot\alpha_i=\mathrm{tr}(G_iWG_i^TS_i)+\sum_j\lambda_{ij}\alpha_j$$</div>
+  <p>זה נראה כמו \(m\) משוואות ריקאטי רגילות, אבל הן <b>מצומדות</b> דרך \(\sum_j\lambda_{ij}S_j\): הבקר במצב \(i\) "יודע" שהוא עלול לעבור למצב אחר, ומתכנן בהתאם. אם \(\lambda=0\) חוזרים ל-\(m\) בעיות LQR נפרדות. אפשר לכתוב את האיבר המצמד כ-\(\lambda_{ii}S_i+\sum_{j\ne i}\lambda_{ij}S_j\), ואז רואים שהוא מקטין את \(F_i\) האפקטיבי ב-\(|\lambda_{ii}|/2\) ומוסיף "מחיר עתידי" ממוצע של המצבים האחרים.</p>
+
+  <h2>מידע חלקי</h2>
+  <p>אם \(\theta_t\) נמדד ישירות ו-\(x\) רק דרך \(dz=H(\theta)xdt+dv\), אז בהינתן מסלול \(\theta\) המערכת לינארית-גאוסית, ומסנן קלמן (עם מטריצות שקופצות יחד עם \(\theta\)) נותן \(\hat x\). עקרון ההפרדה ממשיך לעבוד, והבקר הוא \(u=-R_\theta^{-1}B_\theta^TS_\theta\hat x\).</p>
+  <p>אם \(\theta\) <b>לא</b> נמדד, הבעיה קשה בהרבה: ההתפלגות של \(x\) בהינתן המדידות היא תערובת גאוסיאנים שמספר הרכיבים שלה גדל אקספוננציאלית. ההפרדה כבר לא מדויקת, ומשתמשים בקירובים (למשל מסנן IMM).</p>
+  <div class="book"><b>מקורות להרחבה</b> (מחוץ לרשימת הקריאה של הסילבוס): Wonham, "Random differential equations in control theory" (1970), שבו הופיעו לראשונה משוואות ריקאטי המצומדות; Mariton, <i>Jump Linear Systems in Automatic Control</i> (1990); Costa, Fragoso &amp; Marques, <i>Discrete-Time Markov Jump Linear Systems</i> (2005). בזמן בדיד, עם הסתברויות מעבר \(p_{ij}\), האיבר המצמד הוא \(\mathcal E_i(S)=\sum_jp_{ij}S_j\), שמחליף את \(S_{k+1}\) בריקאטי.</div>
+
+  <div class="lab" data-lab="jump"><h3>מעבדה: מערכת עם שני מצבי עבודה</h3>
+  <p>מצב 1 יציב \((f_1\lt0)\), מצב 2 לא יציב \((f_2\gt0)\). המעבדה פותרת את שתי משוואות ריקאטי המצומדות אחורה בזמן, ומשווה מול בקר "נאיבי" שמתעלם מהקפיצות (פותר כל מצב לבד). הגדילו את \(\lambda_{12}\) וראו איך \(S_1\) עולה: הבקר במצב היציב מתחיל "להתכונן" למעבר.</p>
+  <div class="jump-ui"></div></div>
+
+  <div class="quiz"><h2>בדיקה עצמית</h2>
+  <details><summary>מה קורה למשוואות כש-\(\lambda_{ij}=0\) לכל \(i\ne j\)?</summary><div>האיבר המצמד מתאפס ומקבלים \(m\) משוואות ריקאטי בלתי תלויות, אחת לכל מצב, כמו בשבוע 9.</div></details>
+  <details><summary>למה קשה יותר כש-\(\theta\) לא נמדד?</summary><div>כי ההתפלגות המותנית של \(x\) היא תערובת של גאוסיאנים לפי כל מסלולי ה-\(\theta\) האפשריים, ואין לה סטטיסטיקה מספיקה סופית. מסנן קלמן יחיד כבר לא אופטימלי.</div></details>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+"use strict";
+/* ---------- utilities ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function h(tag,attrs={},...kids){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else if(k==='html')e.innerHTML=attrs[k];else e.setAttribute(k,attrs[k]);}kids.flat().forEach(c=>{if(c!=null)e.append(c.nodeType?c:document.createTextNode(c));});return e;}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const fmt=(x,d=3)=>{if(!isFinite(x))return '∞';const a=Math.abs(x);if(a!==0&&(a<1e-3||a>=1e5))return x.toExponential(2);return (+x.toFixed(d)).toString();};
+const nb=(x,d)=>'\u2066'+fmt(x,d)+'\u2069';
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function palette(){return {pen:css('--pen'),red:css('--red'),green:css('--green'),ink:css('--ink'),soft:css('--ink-soft'),line:css('--line'),amber:'#D19A00',purple:'#8E5BD0'};}
+function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(r){let u=0,v=0;while(u===0)u=r();while(v===0)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* slider control */
+function slider(parent,label,min,max,step,val,onInput,dec){
+  const v=h('span',{class:'v'},fmt(val,dec??3));
+  const inp=h('input',{type:'range',min,max,step,value:val,'aria-label':label});
+  const lab=h('label',{},h('span',{},label+': ',v),inp);
+  parent.append(lab);
+  inp.addEventListener('input',()=>{v.textContent=fmt(+inp.value,dec??3);onInput();});
+  return ()=>+inp.value;
+}
+function legend(items){return h('div',{class:'legend'},items.map(([c,t,dash])=>h('span',{},h('i',{style:`background:${dash?'repeating-linear-gradient(90deg,'+c+' 0 5px,transparent 5px 9px)':c}`}),t)));}
+
+/* ---------- plotting ---------- */
+const plots=new Set();
+function plot(canvas,series,opt={}){
+  canvas._draw=()=>drawPlot(canvas,series,opt);plots.add(canvas);canvas._draw();
+}
+function drawPlot(canvas,series,opt){
+  const dpr=window.devicePixelRatio||1,W=canvas.clientWidth,H=canvas.clientHeight;if(!W)return;
+  canvas.width=W*dpr;canvas.height=H*dpr;const g=canvas.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.direction='ltr';g.clearRect(0,0,W,H);
+  const P=palette();const L=54,R=14,T=14,B=34;
+  let xs=[],ys=[];series.forEach(s=>s.data.forEach(([x,y])=>{if(isFinite(x))xs.push(x);if(isFinite(y))ys.push(y);}));
+  if(opt.hlines)opt.hlines.forEach(l=>ys.push(l.y));
+  let x0=opt.xmin??Math.min(...xs),x1=opt.xmax??Math.max(...xs),y0=opt.ymin??Math.min(...ys),y1=opt.ymax??Math.max(...ys);
+  if(!isFinite(y0)||!isFinite(y1)){y0=0;y1=1;}
+  if(y1-y0<1e-12){y0-=1;y1+=1;}else if(opt.ymin==null||opt.ymax==null){const pad=(y1-y0)*0.08;if(opt.ymin==null)y0-=pad;if(opt.ymax==null)y1+=pad;}
+  if(x1-x0<1e-12)x1=x0+1;
+  const X=x=>L+(x-x0)/(x1-x0)*(W-L-R),Y=y=>T+(1-(y-y0)/(y1-y0))*(H-T-B);
+  g.font='12px Assistant, Arial';g.fillStyle=P.soft;g.strokeStyle=P.line;g.lineWidth=1;
+  const ticks=(a,b,n)=>{const s=Math.pow(10,Math.floor(Math.log10((b-a)/n)));const m=[1,2,5,10].find(k=>(b-a)/(k*s)<=n)*s;const out=[];for(let v=Math.ceil(a/m)*m;v<=b+1e-9;v+=m)out.push(+v.toFixed(10));return out;};
+  g.textAlign='right';g.textBaseline='middle';ticks(y0,y1,5).forEach(v=>{g.beginPath();g.moveTo(L,Y(v));g.lineTo(W-R,Y(v));g.stroke();g.fillText(fmt(v,3),L-6,Y(v));});
+  g.textAlign='center';g.textBaseline='top';ticks(x0,x1,8).forEach(v=>{g.beginPath();g.moveTo(X(v),T);g.lineTo(X(v),H-B);g.stroke();g.fillText(fmt(v,3),X(v),H-B+5);});
+  if(y0<0&&y1>0){g.strokeStyle=P.soft;g.beginPath();g.moveTo(L,Y(0));g.lineTo(W-R,Y(0));g.stroke();}
+  if(opt.xlabel){g.fillStyle=P.soft;g.textAlign='right';g.fillText(opt.xlabel,W-R,H-15);}
+  if(opt.hlines)opt.hlines.forEach(l=>{g.strokeStyle=l.color;g.setLineDash([6,4]);g.lineWidth=1.5;g.beginPath();g.moveTo(L,Y(l.y));g.lineTo(W-R,Y(l.y));g.stroke();g.setLineDash([]);});
+  g.save();g.beginPath();g.rect(L,T,W-L-R,H-T-B);g.clip();
+  series.forEach(s=>{
+    g.strokeStyle=s.color;g.fillStyle=s.color;g.lineWidth=s.width||2;g.globalAlpha=s.alpha??1;g.setLineDash(s.dash?[6,4]:[]);
+    if(s.dots){s.data.forEach(([x,y])=>{g.beginPath();g.arc(X(x),Y(y),s.r||2.5,0,7);g.fill();});}
+    else if(s.step){g.beginPath();s.data.forEach(([x,y],i)=>{if(i===0)g.moveTo(X(x),Y(y));else{g.lineTo(X(x),Y(s.data[i-1][1]));g.lineTo(X(x),Y(y));}});g.stroke();}
+    else{g.beginPath();s.data.forEach(([x,y],i)=>{i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));});g.stroke();}
+    g.globalAlpha=1;g.setLineDash([]);
+  });
+  if(opt.bands)opt.bands.forEach(b=>{g.fillStyle=b.color;g.globalAlpha=.13;g.fillRect(X(b.x0),T,X(b.x1)-X(b.x0),H-T-B);g.globalAlpha=1;});
+  g.restore();
+}
+let rT;window.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>plots.forEach(c=>c.isConnected&&c.offsetParent&&c._draw()),120);});
+const canvas=()=>h('canvas',{class:'plot',role:'img'});
+
+/* ---------- small matrix ops (2x2 / general) ---------- */
+const M={
+  mul:(A,B)=>A.map(r=>B[0].map((_,j)=>r.reduce((s,a,k)=>s+a*B[k][j],0))),
+  T:A=>A[0].map((_,j)=>A.map(r=>r[j])),
+  add:(A,B)=>A.map((r,i)=>r.map((a,j)=>a+B[i][j])),
+  sub:(A,B)=>A.map((r,i)=>r.map((a,j)=>a-B[i][j])),
+  inv:A=>{if(A.length===1)return[[1/A[0][0]]];const[[a,b],[c,d]]=A,det=a*d-b*c;return[[d/det,-b/det],[-c/det,a/det]];}
+};
+
+/* ---------- LABS ---------- */
+const labs={};
+
+labs.dp3=function(root){
+  const ui=$('.dp3-ui',root);
+  const def=[[.25,.5,.75],[.5,.25,.1],[.75,.1,.25]];
+  const grid=h('div',{class:'matrix-in'},h('span',{},'next \\ from'),h('b',{},'1'),h('b',{},'2'),h('b',{},'3'));
+  const cells=[];
+  for(let i=0;i<3;i++){grid.append(h('b',{},String(i+1)));cells.push([]);for(let j=0;j<3;j++){const c=h('input',{type:'number',step:'0.05',value:def[i][j],'aria-label':`cost ${j+1} to ${i+1}`});c.addEventListener('input',run);grid.append(c);cells[i].push(c);}}
+  const nSel=h('select',{'aria-label':'N'},[2,3,4,5,6].map(n=>h('option',{value:n},String(n))));nSel.value='3';nSel.addEventListener('change',run);
+  const sSel=h('select',{'aria-label':'start'},[1,2,3].map(n=>h('option',{value:n},String(n))));sSel.addEventListener('change',run);
+  const reset=h('button',{type:'button'},'החזר לערכי השיעור');reset.onclick=()=>{cells.forEach((r,i)=>r.forEach((c,j)=>c.value=def[i][j]));nSel.value='3';run();};
+  const ctr=h('div',{class:'controls'},h('label',{},'מספר מעברים N',nSel),h('label',{},'מצב התחלתי x₀',sSel),h('label',{},'\u00a0',reset));
+  const out=h('div',{class:'tbl-wrap'}),path=h('p',{class:'out'});
+  ui.append(h('p',{class:'out'},'עלות המעבר (שורה: x_{k+1}, עמודה: x_k):'),grid,ctr,out,path);
+  function run(){
+    const c=cells.map(r=>r.map(x=>+x.value||0)),N=+nSel.value;
+    let J=[0,0,0];const rows=[],pol=[];
+    for(let k=N-1;k>=0;k--){const nj=[],np=[];for(let i=0;i<3;i++){let best=Infinity,bj=0;for(let j=0;j<3;j++){const v=c[j][i]+J[j];if(v<best-1e-12){best=v;bj=j;}}nj.push(best);np.push(bj);}J=nj;rows.unshift(nj);pol.unshift(np);}
+    const t=h('table',{class:'data'},h('tr',{},h('th',{},'k'),[1,2,3].map(i=>h('th',{},`J*_k(${i}) → next`))));
+    rows.forEach((r,k)=>t.append(h('tr',{},h('td',{},String(k)),r.map((v,i)=>h('td',{},`${nb(v)} → ${pol[k][i]+1}`)))));
+    out.replaceChildren(t);
+    let s=+sSel.value-1,seq=[s+1],tot=0;for(let k=0;k<N;k++){const n=pol[k][s];tot+=c[n][s];s=n;seq.push(s+1);}
+    path.textContent=`המסלול האופטימלי: ${seq.join(' → ')}   ·   עלות כוללת ${nb(tot)}`;
+  }
+  run();
+};
+
+labs.vecdp=function(root){
+  const ui=$('.vecdp-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const x1=h('input',{type:'number',value:20,step:1}),x2=h('input',{type:'number',value:21,step:1});
+  const nSel=h('select',{},[1,2,3,4,5,6].map(n=>h('option',{value:n},String(n))));nSel.value='3';
+  ctr.append(h('label',{},'x₀ (רכיב 1)',x1),h('label',{},'x₀ (רכיב 2)',x2),h('label',{},'N',nSel));
+  [x1,x2,nSel].forEach(e=>e.addEventListener('input',run));
+  const out=h('div',{class:'tbl-wrap'});ui.append(out);
+  function run(){
+    const N=+nSel.value,A=[[1,0],[0,1]],B=[[1],[1]],Q=[[1,0],[0,1]],R=[[1]];
+    let P=Q;const G=[],Pk=[];Pk[N]=P;
+    for(let k=N-1;k>=0;k--){const BtP=M.mul(M.T(B),P);const S=M.add(M.mul(BtP,B),R);const Gk=M.mul(M.inv(S),M.mul(BtP,A));G[k]=Gk;
+      const AtP=M.mul(M.T(A),P);P=M.add(Q,M.sub(M.mul(AtP,A),M.mul(M.mul(AtP,B),Gk)));Pk[k]=P;}
+    let x=[[+x1.value],[+x2.value]];
+    const t=h('table',{class:'data'},h('tr',{},['k','x_k','gain (b^T coeff.)','u*_k','J*_k'].map(s=>h('th',{},s))));
+    for(let k=0;k<=N;k++){
+      const J=k<N?M.mul(M.mul(M.T(x),M.sub(Pk[k],Q)),x)[0][0]:0;
+      if(k<N){const u=-M.mul(G[k],x)[0][0];t.append(h('tr',{},h('td',{},k),h('td',{},`[${nb(x[0][0])}, ${nb(x[1][0])}]`),h('td',{},fmt(G[k][0][0],4)),h('td',{class:'best'},fmt(u)),h('td',{},fmt(J))));
+        x=M.add(M.mul(A,x),M.mul(B,[[u]]));}
+      else t.append(h('tr',{},h('td',{},k),h('td',{},`[${nb(x[0][0])}, ${nb(x[1][0])}]`),h('td',{},'–'),h('td',{},'–'),h('td',{},'–')));
+    }
+    out.replaceChildren(t);
+  }
+  run();
+};
+
+labs.lqr=function(root){
+  const ui=$('.lqr-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const a=slider(ctr,'a',-2,2,.05,1.2,run),b=slider(ctr,'b',.1,2,.05,1,run),q=slider(ctr,'q',0,10,.1,1,run),r=slider(ctr,'r',.01,10,.01,1,run),N=slider(ctr,'N',5,60,1,30,run,0),x0=slider(ctr,'x₀',-5,5,.5,4,run);
+  const c1=canvas(),c2=canvas(),o=h('p',{class:'out'});const P=palette();
+  ui.append(legend([[P.pen,'הגבר M_k'],[P.green,'P_k − q (מחיר)'],[P.red,'M_∞',1]]),c1,legend([[P.pen,'x_k'],[P.amber,'u_k']]),c2,o);
+  function run(){
+    const A=a(),B=b(),Qv=q(),Rv=r(),n=N();let p=Qv;const Mk=[],Pk=[];Pk[n]=p;
+    for(let k=n-1;k>=0;k--){const m=B*p*A/(B*B*p+Rv);Mk[k]=m;p=A*p*(A-B*m)+Qv;Pk[k]=p;}
+    let pi=Qv;for(let i=0;i<5000;i++){const m=B*pi*A/(B*B*pi+Rv);pi=A*pi*(A-B*m)+Qv;}const minf=B*pi*A/(B*B*pi+Rv);
+    let x=x0();const xs=[[0,x]],us=[];let J=0;for(let k=0;k<n;k++){const u=-Mk[k]*x;us.push([k,u]);x=A*x+B*u;xs.push([k+1,x]);J+=Qv*x*x+Rv*u*u;}
+    plot(c1,[{data:Mk.map((m,k)=>[k,m]),color:P.pen},{data:Pk.slice(0,n).map((v,k)=>[k,v-Qv]),color:P.green,width:1.5}],{hlines:[{y:minf,color:P.red}],xlabel:'k'});
+    plot(c2,[{data:xs,color:P.pen},{data:us,color:P.amber,step:true}],{xlabel:'k'});
+    o.textContent=`הגבר במצב יציב M∞ = ${nb(minf)} · קוטב חוג סגור a−bM∞ = ${nb(A-B*minf)} · מחיר כולל J = ${nb(J)} · J₀* מהנוסחה = ${nb((Pk[0]-Qv)*x0()*x0())}`;
+  }
+  run();
+};
+
+labs.cautious=function(root){
+  const ui=$('.cautious-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const al=slider(ctr,'α = E a',-2,2,.05,1.2,run),be=slider(ctr,'β = E b',.1,2,.05,1,run),sa=slider(ctr,'σ_a',0,1.5,.05,.3,run),sb=slider(ctr,'σ_b',0,2,.05,.8,run),sw=slider(ctr,'σ_w',0,1,.05,.2,run);
+  const c=canvas(),o=h('p',{class:'out'}),P=palette();
+  ui.append(legend([[P.pen,'E{x²} עם הבקר האופטימלי'],[P.red,'E{x²} עם ודאות שקולה']]),c,o);
+  function run(){
+    const A=al(),Bm=be(),SA=sa(),SB=sb(),SW=sw(),N=10,K=400;
+    const gOpt=A*Bm/(Bm*Bm+SB*SB),gNaive=A/Bm;
+    function sim(g){const r=rng(7);const m=new Array(N+1).fill(0);let cost=0;for(let p=0;p<K;p++){let x=1;m[0]+=1;for(let k=0;k<N;k++){const a=A+SA*gauss(r),b=Bm+SB*gauss(r),w=SW*gauss(r);x=a*x-b*g*x+w;m[k+1]+=x*x;cost+=x*x;}}return{m:m.map(v=>v/K),cost:cost/K};}
+    function theory(g){let ex=1,c=0;const C=SA*SA+A*A-2*A*Bm*g+(Bm*Bm+SB*SB)*g*g;for(let k=0;k<N;k++){ex=C*ex+SW*SW;c+=ex;}return c;}
+    const so=sim(gOpt),sn=sim(gNaive);
+    plot(c,[{data:so.m.map((v,k)=>[k,v]),color:P.pen},{data:sn.m.map((v,k)=>[k,v]),color:P.red}],{xlabel:'k',ymin:0});
+    o.textContent=`הגבר אופטימלי ${nb(gOpt)} מול נאיבי ${nb(gNaive)} · מחיר (תיאורטי): ${nb(theory(gOpt))} מול ${nb(theory(gNaive))} · מונטה קרלו: ${nb(so.cost)} מול ${nb(sn.cost)}`;
+  }
+  run();
+};
+
+labs.fusion=function(root){
+  const ui=$('.fusion-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const x1=slider(ctr,'x₁',-5,5,.1,-1,run),s1=slider(ctr,'σ₁',.1,3,.05,1,run),x2=slider(ctr,'x₂',-5,5,.1,2,run),s2=slider(ctr,'σ₂',.1,3,.05,2,run);
+  const c=canvas(),o=h('p',{class:'out'}),P=palette();ui.append(legend([[P.pen,'מדידה 1'],[P.amber,'מדידה 2'],[P.green,'המשערך המשולב']]),c,o);
+  function run(){
+    const a=x1(),sa=s1(),b=x2(),sb=s2(),w1=sb*sb/(sa*sa+sb*sb),w2=1-w1,xf=w1*a+w2*b,sf=Math.sqrt(sa*sa*sb*sb/(sa*sa+sb*sb));
+    const pdf=(m,s)=>{const d=[];for(let x=-8;x<=8;x+=.04)d.push([x,Math.exp(-.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI))]);return d;};
+    plot(c,[{data:pdf(a,sa),color:P.pen},{data:pdf(b,sb),color:P.amber},{data:pdf(xf,sf),color:P.green,width:3}],{ymin:0,xmin:-8,xmax:8});
+    o.textContent=`w₁ = ${nb(w1)}, w₂ = ${nb(w2)} · x̂ = ${nb(xf)} · σ_x̂ = ${nb(sf)} (קטן מ-${nb(Math.min(sa,sb))})`;
+  }
+  run();
+};
+
+labs.kalman=function(root){
+  const ui=$('.kalman-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  let seed=11;
+  const a=slider(ctr,'a',.5,1.2,.01,1,run),q=slider(ctr,'q (רעש תהליך)',.001,2,.001,.1,run),r=slider(ctr,'r (רעש מדידה)',.001,5,.001,1,run),p0=slider(ctr,'P₀',0,10,.1,1,run);
+  const btn=h('button',{type:'button'},'הגרל רעש חדש');btn.onclick=()=>{seed++;run();};ctr.append(h('label',{},'\u00a0',btn));
+  const c1=canvas(),c2=canvas(),o=h('p',{class:'out'}),P=palette();
+  ui.append(legend([[P.pen,'K_k'],[P.red,'P_k|k'],[P.green,'M_k (חיזוי)',1]]),c1,legend([[P.soft,'מדידות'],[P.ink,'מצב אמיתי'],[P.pen,'שערוך']]),c2,o);
+  function run(){
+    const A=a(),Q=q(),R=r(),N=60,rr=rng(seed);let P0=p0(),x=Math.sqrt(P0)*gauss(rr),xh=0,Pp=P0;
+    const K=[],Ps=[[0,P0]],Ms=[],tr=[[0,x]],es=[[0,0]],ys=[];let se=0;
+    for(let k=1;k<=N;k++){x=A*x+Math.sqrt(Q)*gauss(rr);const y=x+Math.sqrt(R)*gauss(rr);
+      const xb=A*xh,Mm=A*Pp*A+Q,Kk=Mm/(Mm+R);xh=xb+Kk*(y-xb);Pp=(1-Kk)*Mm;
+      K.push([k,Kk]);Ps.push([k,Pp]);Ms.push([k,Mm]);tr.push([k,x]);es.push([k,xh]);ys.push([k,y]);se+=(x-xh)**2;}
+    plot(c1,[{data:K,color:P.pen},{data:Ps,color:P.red},{data:Ms,color:P.green,dash:true,width:1.5}],{xlabel:'k',ymin:0});
+    plot(c2,[{data:ys,color:P.soft,dots:true,r:2},{data:tr,color:P.ink,width:1.5},{data:es,color:P.pen,width:2.5}],{xlabel:'k'});
+    o.textContent=`K במצב יציב ≈ ${nb(K[N-1][1])} · P במצב יציב ≈ ${nb(Ps[N][1])} · שגיאה ריבועית ממוצעת בפועל ${nb(se/N)} (לעומת R = ${nb(R)} אם היינו משתמשים במדידה לבד)`;
+  }
+  run();
+};
+
+labs.lqg=function(root){
+  const ui=$('.lqg-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);let seed=3;
+  const a=slider(ctr,'a',.5,1.5,.01,1.1,run),b=slider(ctr,'b',.2,2,.05,1,run),qw=slider(ctr,'q (רעש תהליך)',.01,1,.01,.1,run),rv=slider(ctr,'r (רעש מדידה)',.01,5,.01,1,run),Qc=slider(ctr,'Q (משקל מצב)',.1,10,.1,1,run),Rc=slider(ctr,'R (משקל בקרה)',.01,5,.01,.5,run);
+  const btn=h('button',{type:'button'},'הגרל רעש חדש');btn.onclick=()=>{seed++;run();};ctr.append(h('label',{},'\u00a0',btn));
+  const c=canvas(),o=h('div',{class:'tbl-wrap'}),P=palette();
+  ui.append(legend([[P.ink,'x עם LQR מלא'],[P.pen,'x עם LQG'],[P.red,'x עם בקר נאיבי']]),c,o);
+  function run(){
+    const A=a(),B=b(),q=qw(),r=rv(),Q=Qc(),R=Rc(),N=60;
+    let s=Q;const L=[];for(let k=N-1;k>=0;k--){L[k]=B*s*A/(B*B*s+R);s=A*s*A-A*s*B*L[k]+Q;}
+    function sim(mode,rr){let x=4,xh=4+gauss(rr),Pp=1,J=0;const tr=[[0,x]];const noise=[];for(let k=0;k<N;k++)noise.push([gauss(rr),gauss(rr)]);let y=x+Math.sqrt(r)*gauss(rr);
+      for(let k=0;k<N;k++){const z=mode==='full'?x:mode==='lqg'?xh:y;const u=-L[k]*z;x=A*x+B*u+Math.sqrt(q)*noise[k][0];y=x+Math.sqrt(r)*noise[k][1];
+        const xb=A*xh+B*u,Mm=A*Pp*A+q,K=Mm/(Mm+r);xh=xb+K*(y-xb);Pp=(1-K)*Mm;J+=Q*x*x+R*u*u;tr.push([k+1,x]);}return{J,tr};}
+    const runs=200,acc={full:0,lqg:0,naive:0};let ex;
+    for(let i=0;i<runs;i++){for(const m of ['full','lqg','naive']){const res=sim(m,rng(seed*1000+i));acc[m]+=res.J/runs;if(i===0){ex=ex||{};ex[m]=res.tr;}}}
+    plot(c,[{data:ex.naive,color:P.red,width:1.5},{data:ex.lqg,color:P.pen,width:2.2},{data:ex.full,color:P.ink,width:1.5}],{xlabel:'k'});
+    const t=h('table',{class:'data'},h('tr',{},h('th',{},'בקר'),h('th',{},'מחיר ממוצע (200 ריצות)')),
+      h('tr',{},h('td',{},'LQR עם מידע מלא (חסם תחתון)'),h('td',{},fmt(acc.full))),
+      h('tr',{},h('td',{},'LQG: קלמן + LQR'),h('td',{class:'best'},fmt(acc.lqg))),
+      h('tr',{},h('td',{},'נאיבי: LQR על המדידה הגולמית'),h('td',{},fmt(acc.naive))));
+    o.replaceChildren(t);
+  }
+  run();
+};
+
+labs.clqr=function(root){
+  const ui=$('.clqr-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const f=slider(ctr,'f',-2,2,.05,.5,run),b=slider(ctr,'b',.1,3,.05,1,run),q=slider(ctr,'q',0,10,.1,1,run),r=slider(ctr,'r',.01,5,.01,1,run),sf=slider(ctr,'S_f',0,10,.1,0,run),tf=slider(ctr,'t_f',.5,10,.1,5,run);
+  const c1=canvas(),c2=canvas(),o=h('p',{class:'out'}),P=palette();
+  ui.append(legend([[P.pen,'S(t)'],[P.red,'s∞ (ARE)',1]]),c1,legend([[P.pen,'x(t)'],[P.amber,'u(t)']]),c2,o);
+  function run(){
+    const F=f(),B=b(),Q=q(),R=r(),T=tf(),n=800,dt=T/n;const rhs=s=>2*F*s-B*B*s*s/R+Q;
+    const S=new Array(n+1);S[n]=sf();for(let i=n;i>0;i--){const s=S[i],k1=rhs(s),k2=rhs(s+dt/2*k1),k3=rhs(s+dt/2*k2),k4=rhs(s+dt*k3);S[i-1]=s+dt/6*(k1+2*k2+2*k3+k4);}
+    const sinf=R/(B*B)*(F+Math.sqrt(F*F+B*B*Q/R));
+    let x=3;const xs=[[0,x]],us=[];for(let i=0;i<n;i++){const u=-B*S[i]/R*x;us.push([i*dt,u]);x+=dt*(F*x+B*u);xs.push([(i+1)*dt,x]);}
+    plot(c1,[{data:S.map((s,i)=>[i*dt,s]),color:P.pen}],{hlines:[{y:sinf,color:P.red}],xlabel:'t',ymin:0});
+    plot(c2,[{data:xs,color:P.pen},{data:us,color:P.amber}],{xlabel:'t'});
+    o.textContent=`s∞ = ${nb(sinf)} · K∞ = ${nb(B*sinf/R)} · קוטב חוג סגור = ${nb(F-B*B*sinf/R)} (= −√(f²+b²q/r) = ${nb(-Math.sqrt(F*F+B*B*Q/R))}) · J°(x₀,0) = ${nb(S[0]*9)}`;
+  }
+  run();
+};
+
+labs.bm=function(root){
+  const ui=$('.bm-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);let seed=21;
+  const sg=slider(ctr,'σ',.2,2,.05,1,run);
+  const dtSel=h('select',{},['0.5','0.1','0.02','0.005','0.001'].map(v=>h('option',{value:v},'Δt = '+v)));dtSel.value='0.1';dtSel.addEventListener('change',run);ctr.append(h('label',{},'גודל צעד',dtSel));
+  const btn=h('button',{type:'button'},'מסלולים חדשים');btn.onclick=()=>{seed++;run();};ctr.append(h('label',{},'\u00a0',btn));
+  const c=canvas(),o=h('p',{class:'out'}),P=palette();ui.append(c,o);
+  function run(){
+    const s=sg(),dt=+dtSel.value,T=4,n=Math.round(T/dt),dx=s*Math.sqrt(dt),cols=[P.pen,P.amber,P.green,P.purple,P.red],rr=rng(seed);const series=[];
+    for(let p=0;p<5;p++){let x=0;const d=[[0,0]];for(let i=1;i<=n;i++){x+=rr()<.5?dx:-dx;d.push([i*dt,x]);}series.push({data:d,color:cols[p],width:1.4,step:dt>=.1});}
+    const env=[],envm=[];for(let t=0;t<=T;t+=T/100){env.push([t,2*s*Math.sqrt(t)]);envm.push([t,-2*s*Math.sqrt(t)]);}
+    series.push({data:env,color:P.soft,dash:true,width:1.5},{data:envm,color:P.soft,dash:true,width:1.5});
+    let v=0;const K=2000,r2=rng(seed+99);for(let p=0;p<K;p++){let x=0;for(let i=0;i<n;i++)x+=r2()<.5?dx:-dx;v+=x*x;}
+    plot(c,series,{xlabel:'t'});
+    o.textContent=`שונות אמפירית ב-T=4 (2000 מסלולים): ${nb(v/K)} · התיאוריה σ²T = ${nb(s*s*T)}`;
+  }
+  run();
+};
+
+labs.gbm=function(root){
+  const ui=$('.gbm-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const sg=slider(ctr,'σ',.1,1,.05,.6,run);
+  const c=canvas(),o=h('p',{class:'out'}),P=palette();ui.append(legend([[P.pen,'ממוצע אמפירי של x²'],[P.green,'e^{2σ²t} (איטו)',1],[P.red,'e^{σ²t} (בלי תוספת איטו)',1]]),c,o);
+  function run(){
+    const s=sg(),T=1,n=400,dt=T/n,K=2000,rr=rng(5),m=new Array(n+1).fill(0);
+    for(let p=0;p<K;p++){let x=1;m[0]+=1;for(let i=1;i<=n;i++){const db=s*Math.sqrt(dt)*gauss(rr);x+=s*s/2*x*dt+x*db;m[i]+=x*x;}}
+    const emp=m.map((v,i)=>[i*dt,v/K]),th=emp.map(([t])=>[t,Math.exp(2*s*s*t)]),wr=emp.map(([t])=>[t,Math.exp(s*s*t)]);
+    plot(c,[{data:emp,color:P.pen,width:2.5},{data:th,color:P.green,dash:true},{data:wr,color:P.red,dash:true}],{xlabel:'t'});
+    o.textContent=`ב-t=1: אמפירי ${nb(emp[n][1])} · איטו ${nb(Math.exp(2*s*s))} · בלי תיקון ${nb(Math.exp(s*s))}`;
+  }
+  run();
+};
+
+labs.slqg=function(root){
+  const ui=$('.slqg-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);
+  const f=slider(ctr,'f',-2,2,.05,.5,run),b=slider(ctr,'b',.1,3,.05,1,run),hh=slider(ctr,'h',.1,3,.05,1,run),q=slider(ctr,'q',.01,10,.01,1,run),r=slider(ctr,'r',.01,10,.01,1,run),w=slider(ctr,'w (רעש תהליך)',.01,10,.01,1,run),v=slider(ctr,'v (רעש מדידה)',.01,10,.01,1,run);
+  const c=h('canvas',{class:'plot',style:'height:130px'}),o=h('div',{class:'tbl-wrap'}),P=palette();
+  ui.append(legend([[P.soft,'קוטב חוג פתוח f'],[P.pen,'קוטב הבקר f−bK_c'],[P.amber,'קוטב המשערך f−K_e h']]),c,o);
+  function run(){
+    const F=f(),B=b(),H=hh(),Q=q(),R=r(),W=w(),V=v();
+    const s=R/(B*B)*(F+Math.sqrt(F*F+B*B*Q/R)),Kc=B*s/R,p=V/(H*H)*(F+Math.sqrt(F*F+H*H*W/V)),Ke=p*H/V,pc=F-B*Kc,pe=F-Ke*H;
+    const lo=Math.min(pc,pe,F,-0.5)*1.15,hi=Math.max(F,0.5)*1.15;
+    plot(c,[{data:[[F,0]],color:P.soft,dots:true,r:7},{data:[[pc,0.3]],color:P.pen,dots:true,r:7},{data:[[pe,-0.3]],color:P.amber,dots:true,r:7}],{xmin:lo,xmax:hi,ymin:-1,ymax:1,xlabel:'Re(s)'});
+    o.replaceChildren(h('table',{class:'data'},
+      h('tr',{},h('th',{},''),h('th',{},'בקר'),h('th',{},'משערך')),
+      h('tr',{},h('td',{},'פתרון ARE'),h('td',{},'s = '+fmt(s)),h('td',{},'p = '+fmt(p))),
+      h('tr',{},h('td',{},'הגבר'),h('td',{},'K_c = '+fmt(Kc)),h('td',{},'K_e = '+fmt(Ke))),
+      h('tr',{},h('td',{},'קוטב'),h('td',{class:'best'},fmt(pc)),h('td',{class:'best'},fmt(pe))),
+      h('tr',{},h('td',{},'מחיר ממוצע'),h('td',{colspan:2},`q·p + s·K_e²·v = ${nb(Q*p+s*Ke*Ke*V)}`))));
+  }
+  run();
+};
+
+labs.jump=function(root){
+  const ui=$('.jump-ui',root),ctr=h('div',{class:'controls'});ui.append(ctr);let seed=4;
+  const f1=slider(ctr,'f₁ (מצב 1)',-3,0,.05,-1,run),f2=slider(ctr,'f₂ (מצב 2)',0,3,.05,1.5,run),l12=slider(ctr,'λ₁₂ (קצב 1→2)',0,5,.05,1,run),l21=slider(ctr,'λ₂₁ (קצב 2→1)',0,5,.05,1,run),q=slider(ctr,'q',.1,10,.1,1,run),r=slider(ctr,'r',.05,5,.05,1,run);
+  const btn=h('button',{type:'button'},'הגרל מסלול חדש');btn.onclick=()=>{seed++;run();};ctr.append(h('label',{},'\u00a0',btn));
+  const c1=canvas(),c2=canvas(),o=h('p',{class:'out'}),P=palette();
+  ui.append(legend([[P.pen,'S₁ מצומד'],[P.red,'S₂ מצומד'],[P.pen,'S₁ לבד',1],[P.red,'S₂ לבד',1]]),c1,legend([[P.pen,'x עם בקר מצומד'],[P.amber,'x עם בקר נאיבי']]),c2,o);
+  function run(){
+    const F=[f1(),f2()],L=[l12(),l21()],Q=q(),R=r(),Bv=1,T=6,n=1200,dt=T/n;
+    const rhs=(s,cpl)=>[0,1].map(i=>2*F[i]*s[i]-Bv*Bv*s[i]*s[i]/R+Q+(cpl?L[i]*(s[1-i]-s[i]):0));
+    function solve(cpl){const S=new Array(n+1);S[n]=[0,0];for(let i=n;i>0;i--){const s=S[i],k1=rhs(s,cpl),k2=rhs(s.map((v,j)=>v+dt/2*k1[j]),cpl),k3=rhs(s.map((v,j)=>v+dt/2*k2[j]),cpl),k4=rhs(s.map((v,j)=>v+dt*k3[j]),cpl);S[i-1]=s.map((v,j)=>v+dt/6*(k1[j]+2*k2[j]+2*k3[j]+k4[j]));}return S;}
+    const Sc=solve(true),Sn=solve(false);
+    plot(c1,[0,1].map(i=>({data:Sc.map((s,k)=>[k*dt,s[i]]),color:i?P.red:P.pen})).concat([0,1].map(i=>({data:Sn.map((s,k)=>[k*dt,s[i]]),color:i?P.red:P.pen,dash:true,width:1.5}))),{xlabel:'t',ymin:0});
+    function sim(S,rr,rec){let x=2,th=0,J=0;const tr=[[0,x]],bands=[];let bs=null;
+      for(let i=0;i<n;i++){if(rr()<L[th]*dt)th=1-th;if(rec){if(th===1&&bs===null)bs=i*dt;if(th===0&&bs!==null){bands.push({x0:bs,x1:i*dt,color:P.red});bs=null;}}
+        const u=-Bv*S[i][th]/R*x;J+=(Q*x*x+R*u*u)*dt;x+=(F[th]*x+Bv*u)*dt+0.3*Math.sqrt(dt)*gauss(rr);tr.push([(i+1)*dt,x]);}
+      if(rec&&bs!==null)bands.push({x0:bs,x1:T,color:P.red});return{J,tr,bands};}
+    let jc=0,jn=0;const K=300;for(let p=0;p<K;p++){jc+=sim(Sc,rng(seed*977+p)).J/K;jn+=sim(Sn,rng(seed*977+p)).J/K;}
+    const ec=sim(Sc,rng(seed*977),true),en=sim(Sn,rng(seed*977));
+    plot(c2,[{data:ec.tr,color:P.pen},{data:en.tr,color:P.amber,width:1.5}],{xlabel:'t (רקע אדום = מצב 2)',bands:ec.bands});
+    o.textContent=`מחיר ממוצע (300 ריצות): בקר מצומד ${nb(jc)} · בקר נאיבי ${nb(jn)} · S₁(0): ${nb(Sc[0][0])} מול ${nb(Sn[0][0])} · S₂(0): ${nb(Sc[0][1])} מול ${nb(Sn[0][1])}`;
+  }
+  run();
+};
+
+/* ---------- router & nav ---------- */
+const weeks=$$('section.week');const ids=weeks.map(w=>w.id);
+const done=new Set(store.get('oc-done',[]));
+const nav=$('#navlist'),grid=$('#homeGrid');
+weeks.forEach((w,i)=>{
+  const isHome=w.id==='home';
+  const a=h('a',{href:'#'+w.id,class:isHome?'home-link':''},h('span',{class:'n'},isHome?'⌂':String(i)),h('span',{},w.dataset.title));
+  nav.append(h('li',{},a));
+  if(!isHome){grid.append(h('a',{href:'#'+w.id},h('b',{},'שבוע '+i),w.dataset.title));
+    const btn=h('button',{type:'button',class:'mark-done'});const upd=()=>{btn.textContent=done.has(w.id)?'✓ סימנתי כנלמד':'סמנו שהשיעור נלמד';btn.classList.toggle('primary',done.has(w.id));a.classList.toggle('done',done.has(w.id));};
+    btn.onclick=()=>{done.has(w.id)?done.delete(w.id):done.add(w.id);store.set('oc-done',[...done]);upd();};upd();
+    const prev=weeks[i-1],next=weeks[i+1];
+    w.append(btn,h('div',{class:'pager'},
+      next?h('a',{href:'#'+next.id},h('small',{},'השיעור הבא'),next.dataset.title):h('span'),
+      prev?h('a',{href:'#'+prev.id,style:'text-align:left'},h('small',{},'השיעור הקודם'),prev.id==='home'?'דף הבית':prev.dataset.title):h('span')));
+  }
+});
+const inited=new Set();
+function show(){
+  let id=location.hash.slice(1);if(!ids.includes(id))id='home';
+  weeks.forEach(w=>w.classList.toggle('active',w.id===id));
+  $$('nav a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+id?'true':'false'));
+  const sec=document.getElementById(id);
+  if(!inited.has(id)){inited.add(id);$$('.lab',sec).forEach(l=>{const f=labs[l.dataset.lab];if(f){try{f(l);}catch(e){console.error(e);l.append(h('p',{class:'out'},'המעבדה לא נטענה: '+e.message));}}});}
+  else plots.forEach(c=>sec.contains(c)&&c._draw());
+  document.title=(id==='home'?'':sec.dataset.title+' · ')+'בקרה אופטימלית';
+  window.scrollTo(0,0);$('#sidebar').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false');
+}
+window.addEventListener('hashchange',show);
+
+/* theme */
+const savedTheme=store.get('oc-theme',null);if(savedTheme)document.documentElement.dataset.theme=savedTheme;
+$('#themeBtn').onclick=()=>{const dark=document.documentElement.dataset.theme?document.documentElement.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;const t=dark?'light':'dark';document.documentElement.dataset.theme=t;store.set('oc-theme',t);plots.forEach(c=>c.offsetParent&&c._draw());};
+$('#printBtn').onclick=()=>window.print();
+$('#menuBtn').onclick=()=>{const s=$('#sidebar');s.classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',s.classList.contains('open'));};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>plots.forEach(c=>c.offsetParent&&c._draw()));
+
+function renderMath(){if(window.renderMathInElement){renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});}}
+window.addEventListener('load',()=>{renderMath();});
+show();
+})();
+</script>
+</body>
+</html>
